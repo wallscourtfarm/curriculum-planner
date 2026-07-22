@@ -1,0 +1,545 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WFA Curriculum Planner</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Nunito', sans-serif; background: #f8fafc; color: #1e293b; font-size: 15px; }
+
+/* ── Nav ── */
+nav {
+  background: #fff; border-bottom: 2px solid #e2e8f0;
+  padding: 0 20px; display: flex; align-items: center; gap: 16px;
+  position: sticky; top: 0; z-index: 100; height: 56px;
+}
+.nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+.nav-logo-icon { width: 36px; height: 36px; background: #1798d3; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center; }
+.nav-logo-icon svg { width: 22px; height: 22px; fill: #fff; }
+.nav-title { font-weight: 800; font-size: 16px; color: #0f172a; }
+.nav-sub { font-size: 12px; color: #64748b; font-weight: 600; }
+nav .spacer { flex: 1; }
+.nav-version { font-size: 11px; color: #94a3b8; font-weight: 600; letter-spacing: .5px; }
+
+/* ── Year bar ── */
+#year-bar {
+  background: #fff; border-bottom: 1px solid #e2e8f0;
+  padding: 10px 20px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+}
+#year-bar .bar-label { font-size: 12px; font-weight: 700; color: #64748b; text-transform: uppercase;
+  letter-spacing: .5px; margin-right: 4px; }
+.year-chip {
+  padding: 5px 14px; border-radius: 20px; font-size: 13px; font-weight: 700;
+  border: 2px solid transparent; cursor: pointer; transition: all .15s; background: #f1f5f9; color: #475569;
+}
+.year-chip:hover { opacity: .85; }
+.year-chip.active { color: #fff; }
+.cross-chip {
+  padding: 5px 14px; border-radius: 20px; font-size: 13px; font-weight: 700;
+  border: 2px solid #cbd5e1; cursor: pointer; transition: all .15s; background: #fff; color: #475569;
+  margin-left: 8px;
+}
+.cross-chip:hover { background: #f1f5f9; }
+.cross-chip.active { background: #0f172a; color: #fff; border-color: #0f172a; }
+
+/* ── View tabs ── */
+#view-tabs {
+  background: #fff; border-bottom: 1px solid #e2e8f0;
+  padding: 0 20px; display: flex; align-items: stretch;
+}
+.view-tab {
+  padding: 12px 18px; font-size: 13px; font-weight: 700; cursor: pointer;
+  border-bottom: 3px solid transparent; color: #64748b; transition: all .15s;
+  white-space: nowrap; background: none; border-top: none; border-left: none; border-right: none;
+}
+.view-tab:hover { color: #1798d3; }
+.view-tab.active { color: #1798d3; border-bottom-color: #1798d3; }
+
+/* ── Term selector ── */
+.term-selector {
+  padding: 12px 20px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  border-bottom: 1px solid #e2e8f0; background: #fff;
+}
+.term-selector .bar-label { font-size: 12px; font-weight: 700; color: #64748b;
+  text-transform: uppercase; letter-spacing: .5px; margin-right: 4px; }
+.term-chip {
+  padding: 5px 14px; border-radius: 20px; font-size: 13px; font-weight: 700;
+  border: 2px solid #e2e8f0; cursor: pointer; transition: all .15s; background: #fff; color: #475569;
+}
+.term-chip:hover { border-color: #94a3b8; }
+.term-chip.active { border-color: #1798d3; background: #1798d3; color: #fff; }
+
+/* ── Views ── */
+.view { display: none; }
+.view.active { display: block; }
+
+/* ── Timeline view ── */
+#view-timeline { overflow: hidden; }
+.timeline-scroll { overflow-x: auto; padding: 0 20px 20px; }
+.timeline-inner { min-width: max-content; }
+
+.tl-header-row { display: flex; align-items: stretch; height: 28px; margin-top: 16px; }
+.tl-sob-label-hdr { width: 150px; flex-shrink: 0; }
+.tl-term-header { display: flex; gap: 8px; }
+.tl-term-block {
+  display: flex; align-items: center; justify-content: center;
+  background: #f1f5f9; border-radius: 6px 6px 0 0;
+  font-size: 11px; font-weight: 800; color: #475569; text-transform: uppercase; letter-spacing: .5px;
+}
+
+.tl-weeks-row { display: flex; align-items: center; height: 22px; margin-bottom: 6px; }
+.tl-sob-label-wk { width: 150px; flex-shrink: 0; }
+.tl-week-hdr { display: flex; gap: 8px; }
+.tl-term-wks { display: flex; }
+.tl-wk-num { width: 34px; font-size: 10px; font-weight: 600; color: #94a3b8; text-align: center; flex-shrink: 0; }
+
+.tl-row { display: flex; align-items: center; margin-bottom: 6px; min-height: 46px; }
+.tl-sob-label { width: 150px; flex-shrink: 0; font-size: 11px; font-weight: 700;
+  color: #64748b; padding-right: 12px; text-align: right; line-height: 1.2; }
+.tl-lanes { display: flex; gap: 8px; }
+.tl-term-lane { position: relative; height: 46px; flex-shrink: 0; background: #f1f5f9; border-radius: 4px; }
+.tl-block {
+  position: absolute; top: 4px; height: 38px; border-radius: 6px;
+  display: flex; align-items: center; padding: 0 8px; gap: 5px;
+  cursor: pointer; transition: transform .1s, box-shadow .1s;
+  overflow: hidden;
+}
+.tl-block:hover { transform: translateY(-1px); box-shadow: 0 4px 14px rgba(0,0,0,.25); }
+.tl-block.selected { box-shadow: 0 0 0 3px #fff, 0 0 0 5px #0f172a; }
+.tl-bid { font-size: 11px; font-weight: 800; opacity: .9; white-space: nowrap; flex-shrink: 0; }
+.tl-bq { font-size: 11px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; opacity: .85; }
+.tl-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; margin-left: auto;
+  border: 1.5px solid rgba(255,255,255,.5); }
+
+/* ── Detail panel ── */
+#detail-panel {
+  background: #fff; border-top: 2px solid #e2e8f0; border-bottom: 2px solid #e2e8f0;
+  padding: 20px 24px; display: none; position: relative;
+}
+#detail-panel.open { display: block; }
+.dp-close { position: absolute; top: 14px; right: 16px; background: none; border: none;
+  font-size: 20px; cursor: pointer; color: #94a3b8; line-height: 1; }
+.dp-close:hover { color: #475569; }
+.dp-header { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 14px; }
+.dp-badge { display: inline-flex; padding: 4px 12px; border-radius: 20px; font-size: 12px;
+  font-weight: 800; color: #fff; white-space: nowrap; align-self: flex-start; margin-top: 3px; }
+.dp-title { font-size: 18px; font-weight: 800; color: #0f172a; line-height: 1.3; }
+.dp-meta { display: flex; flex-wrap: wrap; gap: 20px; font-size: 13px; color: #475569; }
+.dp-mi { display: flex; flex-direction: column; gap: 3px; }
+.dp-ml { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; color: #94a3b8; }
+.dp-mv { font-weight: 600; max-width: 280px; line-height: 1.4; }
+.dp-status-pill { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px;
+  border-radius: 20px; font-size: 12px; font-weight: 700; }
+
+/* ── Cards view ── */
+#view-cards .cards-wrap { padding: 20px; }
+.cards-grid { display: grid; gap: 14px; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
+.card {
+  background: #fff; border-radius: 12px; border: 2px solid #e2e8f0;
+  padding: 16px; cursor: pointer; transition: border-color .15s, box-shadow .15s;
+}
+.card:hover { border-color: #94a3b8; box-shadow: 0 4px 12px rgba(0,0,0,.08); }
+.card-hdr { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
+.card-id { font-size: 12px; font-weight: 800; color: #94a3b8; }
+.card-sob { display: inline-flex; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 800; color: #fff; }
+.card-sdot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; margin-left: auto; }
+.card-title { font-size: 14px; font-weight: 700; color: #0f172a; line-height: 1.4; margin-bottom: 8px; }
+.card-row { font-size: 12px; color: #475569; margin-bottom: 4px; line-height: 1.4; }
+.card-row strong { color: #334155; }
+
+/* ── Cross-year view ── */
+#view-cross .cross-wrap { padding: 20px; overflow-x: auto; }
+.cross-grid { min-width: 900px; }
+.cross-hdr-row { display: grid; gap: 8px; padding-bottom: 8px; border-bottom: 2px solid #e2e8f0; margin-bottom: 10px; }
+.cross-row { display: grid; gap: 8px; margin-bottom: 10px; align-items: start; }
+.cross-sob-label { display: flex; align-items: flex-start; padding-top: 8px; }
+.cross-sob-pill { display: inline-flex; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 800; color: #fff; }
+.cross-cell {
+  background: #fff; border-radius: 8px; border: 2px solid #e2e8f0;
+  padding: 8px 10px; min-height: 60px; cursor: pointer; transition: border-color .1s;
+}
+.cross-cell:hover { border-color: #94a3b8; }
+.cross-cell-empty { background: #f8fafc; border-radius: 8px; border: 2px solid transparent; min-height: 60px; }
+.cross-cell .c-id { font-size: 11px; font-weight: 800; color: #94a3b8; }
+.cross-cell .c-q { font-size: 12px; font-weight: 600; color: #1e293b; line-height: 1.3; margin-top: 3px; }
+.cross-cell .c-text { font-size: 11px; color: #94a3b8; margin-top: 4px; }
+
+/* ── Planning status ── */
+.pill-new    { background: #fef2f2; color: #dc2626; }
+.pill-some   { background: #fffbeb; color: #d97706; }
+.pill-existing { background: #f0fdf4; color: #16a34a; }
+.pill-unknown { background: #f8fafc; color: #94a3b8; }
+
+/* ── Empty state ── */
+.empty-state { padding: 60px 20px; text-align: center; color: #94a3b8; }
+.empty-state h3 { font-size: 18px; font-weight: 700; margin-bottom: 8px; color: #64748b; }
+
+/* ── Footer ── */
+footer {
+  padding: 16px 20px; border-top: 1px solid #e2e8f0; margin-top: 40px;
+  display: flex; align-items: center; justify-content: space-between;
+  font-size: 12px; color: #94a3b8;
+}
+footer strong { color: #64748b; }
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="#">
+    <div class="nav-logo-icon">
+      <svg viewBox="0 0 24 24"><path d="M12 3L1 9l4 2.18v6L12 21l7-3.82v-6L23 9 12 3zm6 8.18l-6 3.28-6-3.28V9.27l6-3.28 6 3.28v1.91z"/></svg>
+    </div>
+    <div>
+      <div class="nav-title">WFA Curriculum Planner</div>
+      <div class="nav-sub">Wallscourt Farm Academy</div>
+    </div>
+  </a>
+  <div class="spacer"></div>
+  <div class="nav-version">22.07.26a</div>
+</nav>
+
+<div id="year-bar">
+  <span class="bar-label">Year group</span>
+</div>
+
+<div id="view-tabs">
+  <button class="view-tab active" onclick="selectView('timeline')">39-week timeline</button>
+  <button class="view-tab" onclick="selectView('cards')">Enquiry cards</button>
+  <button class="view-tab" onclick="selectView('cross')">Cross-year view</button>
+</div>
+
+<div id="view-timeline" class="view active">
+  <div class="timeline-scroll">
+    <div class="timeline-inner" id="timeline-inner"></div>
+  </div>
+  <div id="detail-panel">
+    <button class="dp-close" onclick="closeDetail()">&#x2715;</button>
+    <div id="detail-content"></div>
+  </div>
+</div>
+
+<div id="view-cards" class="view">
+  <div class="term-selector" id="cards-term-sel">
+    <span class="bar-label">Term</span>
+  </div>
+  <div class="cards-wrap">
+    <div class="cards-grid" id="cards-grid"></div>
+  </div>
+</div>
+
+<div id="view-cross" class="view">
+  <div class="term-selector" id="cross-term-sel">
+    <span class="bar-label">Term</span>
+  </div>
+  <div class="cross-wrap">
+    <div class="cross-grid" id="cross-grid"></div>
+  </div>
+</div>
+
+<footer>
+  <span>WFA Curriculum Planner &mdash; 2025&ndash;26</span>
+  <strong>22.07.26a</strong>
+</footer>
+
+<script>
+// ── Embedded data ─────────────────────────────────────────────────────────────
+const YEAR_DATA = {"Y1":{"yearGroup":"Y1","learningZone":"Oak Learning Zone","colour":"#e57d24","colourDark":"#b85e1a","colourLight":"#fef3e2","colourMid":"#fddcb5","keyStage":"KS1","phase":"KS1","enquiries":[{"id":"1.1","term":1,"order":1,"keyQuestion":"What helps me in my learning?","stateOfBeing":"Citizen","linkedText":"","genre":"Inform","writingOutcome":"Instructions","planningStatus":"unknown","weekStart":1,"weekEnd":1},{"id":"1.2","term":1,"order":2,"keyQuestion":"What is an author?","stateOfBeing":"Writer","linkedText":"Beegu & Winnie the Witch","genre":"Entertain","writingOutcome":"Character Description — Wanted poster","planningStatus":"unknown","weekStart":2,"weekEnd":4},{"id":"1.3","term":1,"order":3,"keyQuestion":"Where is my school?","stateOfBeing":"Geographer","linkedText":"Last Stop on Market Street · In Every House on Every Street","genre":"Inform","writingOutcome":"Recount of a trip","planningStatus":"unknown","weekStart":5,"weekEnd":6},{"id":"1.4","term":1,"order":4,"keyQuestion":"What is a scientist?","stateOfBeing":"Scientist","linkedText":"A Scientist Like Me — Shini Somara","genre":"Inform","writingOutcome":"Recount — first hand experience","planningStatus":"unknown","weekStart":7,"weekEnd":8},{"id":"2.1","term":2,"order":1,"keyQuestion":"What is a traditional tale?","stateOfBeing":"Writer","linkedText":"Goldilocks and the Three Bears","genre":"Entertain","writingOutcome":"Character Descriptions","planningStatus":"unknown","weekStart":1,"weekEnd":3},{"id":"2.2","term":2,"order":2,"keyQuestion":"What is my boat made from?","stateOfBeing":"Scientist","linkedText":"Float — Daniel Miyan","genre":"Persuade","writingOutcome":"Posters","planningStatus":"unknown","weekStart":4,"weekEnd":5},{"id":"2.3","term":2,"order":3,"keyQuestion":"How has the way we send messages changed?","stateOfBeing":"Historian","linkedText":"The Jolly Postman","genre":"Inform","writingOutcome":"Letter","planningStatus":"unknown","weekStart":6,"weekEnd":6},{"id":"2.4","term":2,"order":4,"keyQuestion":"How do different people celebrate?","stateOfBeing":"Citizen","linkedText":"","genre":"","writingOutcome":"","planningStatus":"unknown","weekStart":7,"weekEnd":7},{"id":"3.1","term":3,"order":1,"keyQuestion":"How do authors describe?","stateOfBeing":"Writer","linkedText":"Monkey Puzzle — Julia Donaldson","genre":"Entertain","writingOutcome":"Poetry · Non Fiction Fact Files","planningStatus":"unknown","weekStart":1,"weekEnd":2},{"id":"3.2","term":3,"order":2,"keyQuestion":"How do computers remember?","stateOfBeing":"Computer Scientist","linkedText":"Ada Lovelace — Maria Sanchez Vegara","genre":"Inform","writingOutcome":"Instructions and Posters","planningStatus":"unknown","weekStart":3,"weekEnd":4},{"id":"3.3","term":3,"order":3,"keyQuestion":"What are the important historical places around Cheswick Village?","stateOfBeing":"Historian","linkedText":"","genre":"Inform","writingOutcome":"Recount of walk","planningStatus":"unknown","weekStart":5,"weekEnd":6},{"id":"4.1","term":4,"order":1,"keyQuestion":"What is a narrator?","stateOfBeing":"Writer","linkedText":"Jack & the Beanstalk","genre":"Entertain","writingOutcome":"Alternative Ending","planningStatus":"unknown","weekStart":1,"weekEnd":3},{"id":"4.2","term":4,"order":2,"keyQuestion":"How does a bean seed grow?","stateOfBeing":"Scientist","linkedText":"Kew Gardening Book for Children","genre":"Inform","writingOutcome":"Instructions","planningStatus":"unknown","weekStart":4,"weekEnd":5},{"id":"4.3","term":4,"order":3,"keyQuestion":"Why are festivals and celebrations special?","stateOfBeing":"Citizen","linkedText":"","genre":"Persuade","writingOutcome":"Invite to a celebration","planningStatus":"unknown","weekStart":6,"weekEnd":6},{"id":"5.1","term":5,"order":1,"keyQuestion":"How do authors invent a story?","stateOfBeing":"Writer","linkedText":"Little Red Hen Makes Pizza","genre":"Entertain","writingOutcome":"Innovate a story","planningStatus":"unknown","weekStart":1,"weekEnd":3},{"id":"5.2","term":5,"order":2,"keyQuestion":"Are humans animals?","stateOfBeing":"Scientist","linkedText":"Big Book of Bugs · Big Book of Mammals · Big Book of Birds","genre":"Inform","writingOutcome":"Fact File","planningStatus":"unknown","weekStart":4,"weekEnd":4},{"id":"5.3","term":5,"order":3,"keyQuestion":"How does the weather change through the seasons?","stateOfBeing":"Geographer","linkedText":"Seasons","genre":"Inform","writingOutcome":"Recount — Postcard","planningStatus":"unknown","weekStart":5,"weekEnd":5},{"id":"6.1","term":6,"order":1,"keyQuestion":"What is a poem?","stateOfBeing":"Writer","linkedText":"Poems Aloud","genre":"Entertain","writingOutcome":"Rhyming poem","planningStatus":"unknown","weekStart":1,"weekEnd":3},{"id":"6.2","term":6,"order":2,"keyQuestion":"How do we create a woven pattern?","stateOfBeing":"Artist","linkedText":"Children's Book of Art","genre":"Inform","writingOutcome":"Instructions","planningStatus":"unknown","weekStart":4,"weekEnd":5},{"id":"6.3","term":6,"order":3,"keyQuestion":"How was life different in the past?","stateOfBeing":"Historian","linkedText":"","genre":"Inform","writingOutcome":"Report","planningStatus":"unknown","weekStart":6,"weekEnd":7}]},"Y2":{"yearGroup":"Y2","learningZone":"Willow Learning Zone","colour":"#2bae62","colourDark":"#1e8a4a","colourLight":"#e8faf0","colourMid":"#c3f0d7","keyStage":"KS1","phase":"KS1","enquiries":[{"id":"1.1","term":1,"order":1,"keyQuestion":"What skills do successful learners need?","stateOfBeing":"Citizen","linkedText":"The Most Magnificent Thing — Ashley Spires","genre":"Inform","writingOutcome":"Recount of making a magnificent thing","planningStatus":"unknown","weekStart":1,"weekEnd":1},{"id":"1.2","term":1,"order":2,"keyQuestion":"How do authors use adjectives?","stateOfBeing":"Writer","linkedText":"Goldilocks (different versions)","genre":"Entertain","writingOutcome":"Character Descriptions · short burst stories","planningStatus":"unknown","weekStart":2,"weekEnd":3},{"id":"1.3","term":1,"order":3,"keyQuestion":"What animals do we share our environment with?","stateOfBeing":"Scientist","linkedText":"Dear Earth","genre":"Inform","writingOutcome":"Letter","planningStatus":"unknown","weekStart":4,"weekEnd":5},{"id":"1.4","term":1,"order":4,"keyQuestion":"What are the regions of the United Kingdom?","stateOfBeing":"Geographer","linkedText":"First Atlas","genre":"Inform","writingOutcome":"Short report","planningStatus":"unknown","weekStart":6,"weekEnd":6},{"id":"1.5","term":1,"order":5,"keyQuestion":"What are the world's oceans and continents?","stateOfBeing":"Geographer","linkedText":"","genre":"Persuade","writingOutcome":"Poster about protecting environment","planningStatus":"unknown","weekStart":7,"weekEnd":8},{"id":"2.1","term":2,"order":1,"keyQuestion":"How do authors use interesting noun phrases?","stateOfBeing":"Writer","linkedText":"Little Red (different versions)","genre":"Entertain","writingOutcome":"Character Descriptions · short burst stories","planningStatus":"unknown","weekStart":1,"weekEnd":2},{"id":"2.2","term":2,"order":2,"keyQuestion":"How did the Great Fire of London affect the civilisation?","stateOfBeing":"Historian","linkedText":"Vlad and the Great Fire of London","genre":"Inform","writingOutcome":"Diary entry","planningStatus":"unknown","weekStart":3,"weekEnd":4},{"id":"2.3","term":2,"order":3,"keyQuestion":"What are states of matter?","stateOfBeing":"Scientist","linkedText":"I See Science — States of Matter","genre":"Explain","writingOutcome":"Instructions","planningStatus":"unknown","weekStart":5,"weekEnd":6},{"id":"2.4","term":2,"order":4,"keyQuestion":"How do Christians celebrate Christmas?","stateOfBeing":"Citizen","linkedText":"","genre":"","writingOutcome":"","planningStatus":"unknown","weekStart":7,"weekEnd":7},{"id":"3.1","term":3,"order":1,"keyQuestion":"How do authors create interesting characters?","stateOfBeing":"Writer","linkedText":"Egg Box Dragon — Richard Adams","genre":"Persuade","writingOutcome":"Missing poster","planningStatus":"unknown","weekStart":1,"weekEnd":2},{"id":"3.2","term":3,"order":2,"keyQuestion":"What is the physical and human geography like in Guizhou?","stateOfBeing":"Geographer","linkedText":"Lunar New Year","genre":"Inform","writingOutcome":"Postcard","planningStatus":"unknown","weekStart":3,"weekEnd":4},{"id":"3.3","term":3,"order":3,"keyQuestion":"What was civilisation like in the Victorian era?","stateOfBeing":"Historian","linkedText":"","genre":"Inform","writingOutcome":"","planningStatus":"unknown","weekStart":5,"weekEnd":6},{"id":"4.1","term":4,"order":1,"keyQuestion":"How do authors create settings?","stateOfBeing":"Writer","linkedText":"Emily Brown and the Thing","genre":"Entertain","writingOutcome":"Setting descriptions · short burst stories","planningStatus":"unknown","weekStart":1,"weekEnd":2},{"id":"4.2","term":4,"order":2,"keyQuestion":"How do Muslims celebrate Eid?","stateOfBeing":"Citizen","linkedText":"The Best Eid","genre":"Inform","writingOutcome":"Booklet","planningStatus":"unknown","weekStart":3,"weekEnd":4},{"id":"4.3","term":4,"order":3,"keyQuestion":"How do I keep my body brilliant?","stateOfBeing":"Scientist","linkedText":"","genre":"Inform","writingOutcome":"Poster with commands","planningStatus":"unknown","weekStart":5,"weekEnd":5},{"id":"4.4","term":4,"order":4,"keyQuestion":"What are the special stories in Judaism?","stateOfBeing":"Citizen","linkedText":"","genre":"Inform","writingOutcome":"","planningStatus":"unknown","weekStart":6,"weekEnd":6},{"id":"5.1","term":5,"order":1,"keyQuestion":"How do authors write endings?","stateOfBeing":"Writer","linkedText":"Rapunzel (different versions)","genre":"Entertain","writingOutcome":"Alternative Ending","planningStatus":"unknown","weekStart":1,"weekEnd":2},{"id":"5.2","term":5,"order":2,"keyQuestion":"How do my body systems work together to keep me healthy?","stateOfBeing":"Scientist","linkedText":"Illumanatomy","genre":"Inform","writingOutcome":"Poster of human body systems","planningStatus":"unknown","weekStart":3,"weekEnd":4},{"id":"5.3","term":5,"order":3,"keyQuestion":"What is a lever?","stateOfBeing":"Designer","linkedText":"Rosie Revere Engineer · An Engineer Like Me","genre":"Explain","writingOutcome":"Instructions","planningStatus":"unknown","weekStart":5,"weekEnd":5},{"id":"6.1","term":6,"order":1,"keyQuestion":"How do writers create exciting narratives?","stateOfBeing":"Writer","linkedText":"Billy and the Pirates — Nadia Shireen","genre":"Entertain","writingOutcome":"Narrative","planningStatus":"unknown","weekStart":1,"weekEnd":3},{"id":"6.2","term":6,"order":2,"keyQuestion":"How did railways revolutionise and connect communities?","stateOfBeing":"Historian","linkedText":"","genre":"Inform","writingOutcome":"Recount of trip","planningStatus":"unknown","weekStart":4,"weekEnd":5},{"id":"6.3","term":6,"order":3,"keyQuestion":"How do computers follow instructions?","stateOfBeing":"Computer Scientist","linkedText":"","genre":"Explain","writingOutcome":"Instructions","planningStatus":"unknown","weekStart":6,"weekEnd":6},{"id":"6.4","term":6,"order":4,"keyQuestion":"What is the Internet?","stateOfBeing":"Computer Scientist","linkedText":"","genre":"Explain","writingOutcome":"Poster about internet","planningStatus":"unknown","weekStart":7,"weekEnd":7}]},"Y3":{"yearGroup":"Y3","learningZone":"Ash Learning Zone","colour":"#c0157b","colourDark":"#920f5e","colourLight":"#fce4f3","colourMid":"#f5b8de","keyStage":"KS2","phase":"LKS2","enquiries":[{"id":"1.1","term":1,"order":1,"keyQuestion":"What do successful learners do?","stateOfBeing":"Citizen","linkedText":"WFA documents — 21st Century skills, Rights and Responsibilities","genre":"Explain","writingOutcome":"Instructions / recipe","planningStatus":"unknown","weekStart":1,"weekEnd":1},{"id":"1.2","term":1,"order":2,"keyQuestion":"How do you read pictures?","stateOfBeing":"Writer","linkedText":"Grendel — David Lucas","genre":"Entertain","writingOutcome":"A Moral Tale","planningStatus":"unknown","weekStart":2,"weekEnd":4},{"id":"1.3","term":1,"order":3,"keyQuestion":"What do I need that for?","stateOfBeing":"Scientist","linkedText":"Gut Garden — Katie Brosnan","genre":"Explain","writingOutcome":"Narrative — a day in the life","planningStatus":"unknown","weekStart":5,"weekEnd":5},{"id":"1.4","term":1,"order":4,"keyQuestion":"What makes a healthy diet?","stateOfBeing":"Scientist","linkedText":"The Army Inside You — Lindsey Garvin","genre":"Inform","writingOutcome":"Information booklet (guide for Y2)","planningStatus":"unknown","weekStart":6,"weekEnd":7},{"id":"1.5","term":1,"order":5,"keyQuestion":"How does light travel?","stateOfBeing":"Scientist","linkedText":"The Dark — Lemony Snicket","genre":"Explain","writingOutcome":"Instruction Manual","planningStatus":"unknown","weekStart":8,"weekEnd":8},{"id":"2.1","term":2,"order":1,"keyQuestion":"How do you bring a setting to life?","stateOfBeing":"Writer","linkedText":"Ocean Meets Sky — Devin Fan","genre":"Entertain","writingOutcome":"Setting description · Diary","planningStatus":"unknown","weekStart":1,"weekEnd":2},{"id":"2.2","term":2,"order":2,"keyQuestion":"What does it mean to be a digital citizen?","stateOfBeing":"Computer Scientist","linkedText":"Troll Stinks · Old MacDonald Had a Phone · Chicken Clicking","genre":"Inform","writingOutcome":"Poster · Letters","planningStatus":"unknown","weekStart":3,"weekEnd":3},{"id":"2.3","term":2,"order":3,"keyQuestion":"How has the monarchy influenced our world?","stateOfBeing":"Historian","linkedText":"In the Queen's Words · Tudors and Stuarts · Monarchs","genre":"Inform","writingOutcome":"Letter in role (recount)","planningStatus":"unknown","weekStart":4,"weekEnd":7},{"id":"3.1","term":3,"order":1,"keyQuestion":"How does an author recount an event?","stateOfBeing":"Writer","linkedText":"Stone Girl, Bone Girl — Laurence Anholt","genre":"Entertain","writingOutcome":"Diary Entry","planningStatus":"unknown","weekStart":1,"weekEnd":2},{"id":"3.2","term":3,"order":2,"keyQuestion":"What's inside the Earth?","stateOfBeing":"Scientist","linkedText":"The Pebble in my Pocket · The Rock Factory — Jacqui Bailey","genre":"Explain","writingOutcome":"Non-Chronological Report","planningStatus":"unknown","weekStart":3,"weekEnd":4},{"id":"3.3","term":3,"order":3,"keyQuestion":"What does it mean to belong to a religion?","stateOfBeing":"Citizen","linkedText":"Sikh-FUN-damentals","genre":"Inform","writingOutcome":"Information text about Guru Nanak's life","planningStatus":"unknown","weekStart":5,"weekEnd":6},{"id":"4.1","term":4,"order":1,"keyQuestion":"How do authors engage readers?","stateOfBeing":"Writer","linkedText":"The Tin Forest — Helen Ward","genre":"Entertain","writingOutcome":"Retelling","planningStatus":"unknown","weekStart":1,"weekEnd":2},{"id":"4.2","term":4,"order":2,"keyQuestion":"How do plants survive?","stateOfBeing":"Scientist","linkedText":"The Tiny Seed · The Flower — John Light","genre":"Inform","writingOutcome":"Instructions","planningStatus":"unknown","weekStart":3,"weekEnd":4},{"id":"4.3","term":4,"order":3,"keyQuestion":"Are insects helpful or harmful?","stateOfBeing":"Scientist","linkedText":"Insect Detectives","genre":"Argue","writingOutcome":"Oral & Written Debate","planningStatus":"unknown","weekStart":5,"weekEnd":6},{"id":"5.1","term":5,"order":1,"keyQuestion":"How does an author develop a character?","stateOfBeing":"Writer","linkedText":"Cloud Tea Monkeys — Elspeth Graham","genre":"Entertain","writingOutcome":"First person Narrative","planningStatus":"unknown","weekStart":1,"weekEnd":2},{"id":"5.2","term":5,"order":2,"keyQuestion":"How does water move?","stateOfBeing":"Scientist","linkedText":"The Great Big Water Cycle Adventure — Kay Barnham","genre":"Explain","writingOutcome":"Scientific diagram & explanation","planningStatus":"unknown","weekStart":3,"weekEnd":3},{"id":"5.3","term":5,"order":3,"keyQuestion":"When did Europeans start exploring the world?","stateOfBeing":"Historian","linkedText":"","genre":"Inform","writingOutcome":"Letter","planningStatus":"unknown","weekStart":4,"weekEnd":5},{"id":"6.1","term":6,"order":1,"keyQuestion":"What's in a name?","stateOfBeing":"Writer","linkedText":"The Name Jar — Yangsook Choi","genre":"Entertain","writingOutcome":"Narrative Retelling","planningStatus":"unknown","weekStart":1,"weekEnd":2},{"id":"6.2","term":6,"order":2,"keyQuestion":"What forces are created by a magnet?","stateOfBeing":"Scientist","linkedText":"","genre":"Inform","writingOutcome":"Scientific diagram & explanation","planningStatus":"unknown","weekStart":3,"weekEnd":4},{"id":"6.3","term":6,"order":3,"keyQuestion":"How do I design a lever?","stateOfBeing":"Designer","linkedText":"","genre":"Explain","writingOutcome":"Instruction Manual","planningStatus":"unknown","weekStart":5,"weekEnd":5},{"id":"6.4","term":6,"order":4,"keyQuestion":"Where is the Mediterranean?","stateOfBeing":"Geographer","linkedText":"King of the Sky — Nicola Davies","genre":"Persuade","writingOutcome":"Brochure","planningStatus":"unknown","weekStart":6,"weekEnd":7}]},"Y4":{"yearGroup":"Y4","learningZone":"Maple Learning Zone","colour":"#1798d3","colourDark":"#0f6fa3","colourLight":"#e0f2fe","colourMid":"#bae0f5","keyStage":"KS2","phase":"LKS2","enquiries":[{"id":"1.1","term":1,"order":1,"keyQuestion":"What skills do successful learners need?","stateOfBeing":"Citizen","linkedText":"","genre":"","writingOutcome":"","planningStatus":"unknown","weekStart":1,"weekEnd":1},{"id":"1.2","term":1,"order":2,"keyQuestion":"How do authors create settings?","stateOfBeing":"Writer","linkedText":"Quest — Aaron Becker","genre":"Entertain","writingOutcome":"Setting description — expanded noun phrases · Figurative language (simile, alliteration, hyperbole)","planningStatus":"new","weekStart":2,"weekEnd":4},{"id":"1.3","term":1,"order":3,"keyQuestion":"What is the difference between a region and a county?","stateOfBeing":"Geographer","linkedText":"Non-fiction geographical texts · Maps · Online resources","genre":"Inform","writingOutcome":"NC report — headings, subheadings, organising into paragraphs","planningStatus":"some","weekStart":5,"weekEnd":5},{"id":"1.4","term":1,"order":4,"keyQuestion":"How did invasion create kingdoms?","stateOfBeing":"Historian","linkedText":"Anglo Saxon Boy — Tony Bradman · Sutton Hoo reading","genre":"Inform","writingOutcome":"Non-Chronological Report · Build a model Anglo-Saxon village","planningStatus":"existing","weekStart":6,"weekEnd":7},{"id":"1.5","term":1,"order":5,"keyQuestion":"How are computers connected? (3 days)","stateOfBeing":"Computer Scientist","linkedText":"","genre":"Explain","writingOutcome":"Poster — fronted adverbials","planningStatus":"existing","weekStart":8,"weekEnd":8},{"id":"2.1","term":2,"order":1,"keyQuestion":"How do authors use language for effect?","stateOfBeing":"Writer","linkedText":"Arthur and the Golden Rope — Joe Todd Stanton","genre":"Entertain","writingOutcome":"Character descriptions · Speech · Conjunctions · Apostrophes","planningStatus":"new","weekStart":1,"weekEnd":2},{"id":"2.2","term":2,"order":2,"keyQuestion":"How do scientists classify animals?","stateOfBeing":"Scientist","linkedText":"","genre":"Explain","writingOutcome":"Explain the process of classification — technical vocabulary","planningStatus":"existing","weekStart":3,"weekEnd":5},{"id":"2.3","term":2,"order":3,"keyQuestion":"What is the physical and human environment like in South America (Peru)?","stateOfBeing":"Geographer","linkedText":"","genre":"Inform","writingOutcome":"NC report — complex and compound sentences","planningStatus":"some","weekStart":6,"weekEnd":7},{"id":"3.1","term":3,"order":1,"keyQuestion":"How do authors develop a character?","stateOfBeing":"Writer","linkedText":"Agent Zaiba Investigates — Annabelle Sami","genre":"Entertain","writingOutcome":"Retell section — Precise nouns, pronouns · Power of 3, repetition","planningStatus":"new","weekStart":1,"weekEnd":3},{"id":"3.2","term":3,"order":2,"keyQuestion":"How does electricity flow in a circuit?","stateOfBeing":"Scientist","linkedText":"","genre":"Explain","writingOutcome":"Instructions (experiment) — fronted time adverbials · headings and subheadings","planningStatus":"existing","weekStart":4,"weekEnd":5},{"id":"3.3","term":3,"order":3,"keyQuestion":"When was the golden age of Islam?","stateOfBeing":"Historian","linkedText":"1001 Inventions and Awesome Facts from Muslim Civilisations","genre":"Inform","writingOutcome":"Presentation to Y2","planningStatus":"existing","weekStart":6,"weekEnd":6},{"id":"4.1","term":4,"order":1,"keyQuestion":"How do authors convey emotions?","stateOfBeing":"Writer","linkedText":"The Wild Robot — Peter Brown","genre":"Entertain","writingOutcome":"Alternative ending — figurative language, hyperbole, speech · Modifying nouns and adjectives","planningStatus":"new","weekStart":1,"weekEnd":3},{"id":"4.2","term":4,"order":2,"keyQuestion":"What is the legacy of the Ancient Mayan civilisation?","stateOfBeing":"Historian","linkedText":"Oh Maya Gods — Maz Evans","genre":"Inform","writingOutcome":"Travel Brochure — tense (past, present, perfect form)","planningStatus":"existing","weekStart":4,"weekEnd":5},{"id":"4.3","term":4,"order":3,"keyQuestion":"What is the significance of Easter to Christians?","stateOfBeing":"Citizen","linkedText":"","genre":"Recount","writingOutcome":"Diary from onlooker — first person pronouns","planningStatus":"new","weekStart":6,"weekEnd":6},{"id":"5.1","term":5,"order":1,"keyQuestion":"How do authors use dialogue in their writing?","stateOfBeing":"Writer","linkedText":"The Girl Who Stole an Elephant — Nizrana Farook","genre":"Entertain","writingOutcome":"Speech, punctuation and features — using dialogue to solve a problem · Cohesion variety","planningStatus":"new","weekStart":1,"weekEnd":2},{"id":"5.2","term":5,"order":2,"keyQuestion":"How does sound travel?","stateOfBeing":"Scientist","linkedText":"","genre":"Explain","writingOutcome":"Infographic with explanation of sound travelling through air — technical vocabulary","planningStatus":"existing","weekStart":3,"weekEnd":4},{"id":"5.3","term":5,"order":3,"keyQuestion":"What do Buddhists believe in?","stateOfBeing":"Citizen","linkedText":"The Buddha in Me — Christine H Huynh","genre":"Inform","writingOutcome":"Gathering — oracy","planningStatus":"existing","weekStart":5,"weekEnd":5},{"id":"6.1","term":6,"order":1,"keyQuestion":"How do authors use different sentence structures?","stateOfBeing":"Writer","linkedText":"Varjak Paw — SF Said","genre":"Entertain","writingOutcome":"Retell story (part) — sentence variety and structures","planningStatus":"new","weekStart":1,"weekEnd":3},{"id":"6.2","term":6,"order":2,"keyQuestion":"Are England and Brazil similar?","stateOfBeing":"Geographer","linkedText":"","genre":"Argue","writingOutcome":"Argue against teacher — subordinate clause position, complex sentences","planningStatus":"new","weekStart":4,"weekEnd":5},{"id":"6.3","term":6,"order":3,"keyQuestion":"How do computer scientists use programming and animation?","stateOfBeing":"Computer Scientist","linkedText":"","genre":"","writingOutcome":"Subordinate clause position · complex sentences","planningStatus":"unknown","weekStart":6,"weekEnd":6},{"id":"6.4","term":6,"order":4,"keyQuestion":"How can scientists observe solids, liquids and gases changing states of matter?","stateOfBeing":"Scientist","linkedText":"","genre":"Inform","writingOutcome":"NC report","planningStatus":"existing","weekStart":7,"weekEnd":7}]},"Y5":{"yearGroup":"Y5","learningZone":"Hazel Learning Zone","colour":"#e57d24","colourDark":"#b85e1a","colourLight":"#fef3e2","colourMid":"#fddcb5","keyStage":"KS2","phase":"UKS2","enquiries":[{"id":"1.1","term":1,"order":1,"keyQuestion":"Why is it good to be me?","stateOfBeing":"Citizen","linkedText":"","genre":"","writingOutcome":"","planningStatus":"unknown","weekStart":1,"weekEnd":2},{"id":"1.2","term":1,"order":2,"keyQuestion":"How do authors use setting to create atmosphere?","stateOfBeing":"Writer","linkedText":"Holes — Louis Sachar","genre":"Entertain","writingOutcome":"Setting description","planningStatus":"unknown","weekStart":3,"weekEnd":5},{"id":"1.3","term":1,"order":3,"keyQuestion":"What makes a fair test?","stateOfBeing":"Scientist","linkedText":"","genre":"Explain","writingOutcome":"Explanation Text","planningStatus":"unknown","weekStart":6,"weekEnd":7},{"id":"1.4","term":1,"order":4,"keyQuestion":"Could computers take over the world?","stateOfBeing":"Computer Scientist","linkedText":"","genre":"Argue","writingOutcome":"Debate summary — persuade","planningStatus":"unknown","weekStart":8,"weekEnd":8},{"id":"2.1","term":2,"order":1,"keyQuestion":"How do authors write action sequences?","stateOfBeing":"Writer","linkedText":"Seasons of Splendour — Madhur Jaffrey","genre":"Entertain","writingOutcome":"Alternative ending with action sequence","planningStatus":"unknown","weekStart":1,"weekEnd":3},{"id":"2.2","term":2,"order":2,"keyQuestion":"Why do I need a heart?","stateOfBeing":"Scientist","linkedText":"","genre":"Explain","writingOutcome":"Instructions","planningStatus":"unknown","weekStart":4,"weekEnd":5},{"id":"2.3","term":2,"order":3,"keyQuestion":"How did ancient Egyptians show what they believed in?","stateOfBeing":"Historian","linkedText":"","genre":"Inform","writingOutcome":"Non-Chronological Report","planningStatus":"unknown","weekStart":6,"weekEnd":7},{"id":"3.1","term":3,"order":1,"keyQuestion":"How do authors bring characters to life?","stateOfBeing":"Writer","linkedText":"The Fantastic Mr Fox — Roald Dahl","genre":"Entertain","writingOutcome":"Show not tell character description","planningStatus":"unknown","weekStart":1,"weekEnd":2},{"id":"3.2","term":3,"order":2,"keyQuestion":"How can we love our Earth?","stateOfBeing":"Geographer","linkedText":"","genre":"Argue","writingOutcome":"Speeches","planningStatus":"unknown","weekStart":3,"weekEnd":4},{"id":"3.3","term":3,"order":3,"keyQuestion":"Would you like to be an Ancient Roman?","stateOfBeing":"Historian","linkedText":"","genre":"Inform","writingOutcome":"Report","planningStatus":"unknown","weekStart":5,"weekEnd":6},{"id":"4.1","term":4,"order":1,"keyQuestion":"How do authors create different tones?","stateOfBeing":"Writer","linkedText":"Varmints — Helen Ward","genre":"Entertain","writingOutcome":"Story Retell","planningStatus":"unknown","weekStart":1,"weekEnd":3},{"id":"4.2","term":4,"order":2,"keyQuestion":"How can we forecast the weather?","stateOfBeing":"Geographer","linkedText":"","genre":"Inform","writingOutcome":"Weather report","planningStatus":"unknown","weekStart":4,"weekEnd":6},{"id":"5.1","term":5,"order":1,"keyQuestion":"How do authors use figurative language to create setting descriptions?","stateOfBeing":"Writer","linkedText":"The Highwayman — Alfred Noyes","genre":"Entertain","writingOutcome":"Poem Innovation","planningStatus":"unknown","weekStart":1,"weekEnd":3},{"id":"5.2","term":5,"order":2,"keyQuestion":"Geography and physics study","stateOfBeing":"Geographer","linkedText":"","genre":"Explain","writingOutcome":"Leaflet","planningStatus":"unknown","weekStart":4,"weekEnd":4},{"id":"5.3","term":5,"order":3,"keyQuestion":"How does our planet compare to other planets?","stateOfBeing":"Scientist","linkedText":"","genre":"Explain","writingOutcome":"Write and perform a rap","planningStatus":"unknown","weekStart":5,"weekEnd":5},{"id":"6.1","term":6,"order":1,"keyQuestion":"How do authors write a narrative?","stateOfBeing":"Writer","linkedText":"Running Wild — Michael Morpurgo","genre":"Entertain","writingOutcome":"Alternative version","planningStatus":"unknown","weekStart":1,"weekEnd":3},{"id":"6.2","term":6,"order":2,"keyQuestion":"How does water shape the land?","stateOfBeing":"Geographer","linkedText":"","genre":"Argue","writingOutcome":"Leaflet","planningStatus":"unknown","weekStart":4,"weekEnd":5},{"id":"6.3","term":6,"order":3,"keyQuestion":"How do designers use colour and fabric to express ideas?","stateOfBeing":"Artist","linkedText":"","genre":"Explain","writingOutcome":"Explanation and Evaluation Text","planningStatus":"unknown","weekStart":6,"weekEnd":7}]},"Y6":{"yearGroup":"Y6","learningZone":"Elm Learning Zone","colour":"#2bae62","colourDark":"#1e8a4a","colourLight":"#e8faf0","colourMid":"#c3f0d7","keyStage":"KS2","phase":"UKS2","enquiries":[{"id":"1.1","term":1,"order":1,"keyQuestion":"What do successful learners do?","stateOfBeing":"Citizen","linkedText":"","genre":"","writingOutcome":"Class Charters","planningStatus":"unknown","weekStart":1,"weekEnd":2},{"id":"1.2","term":1,"order":2,"keyQuestion":"How do authors develop character through action?","stateOfBeing":"Writer","linkedText":"Refugee Boy — Benjamin Zephaniah","genre":"Entertain","writingOutcome":"Action sequence","planningStatus":"unknown","weekStart":3,"weekEnd":4},{"id":"1.3","term":1,"order":3,"keyQuestion":"What was life like in the Ancient Greek civilisation?","stateOfBeing":"Historian","linkedText":"Adventures of Odysseus — Hugh Lupton","genre":"Instruct","writingOutcome":"A survival guide","planningStatus":"unknown","weekStart":5,"weekEnd":6},{"id":"1.4","term":1,"order":4,"keyQuestion":"How do we stay safe online?","stateOfBeing":"Computer Scientist","linkedText":"","genre":"Explanation","writingOutcome":"","planningStatus":"unknown","weekStart":7,"weekEnd":8},{"id":"2.1","term":2,"order":1,"keyQuestion":"How do authors use action to engage readers?","stateOfBeing":"Writer","linkedText":"Floodland — Marcus Sedgwick","genre":"Entertain","writingOutcome":"An innovated story","planningStatus":"unknown","weekStart":1,"weekEnd":2},{"id":"2.2","term":2,"order":2,"keyQuestion":"Why was the Ancient Egyptian empire the longest that ever existed?","stateOfBeing":"Historian","linkedText":"","genre":"Explain","writingOutcome":"Explaining why the River Nile was so important","planningStatus":"unknown","weekStart":3,"weekEnd":5},{"id":"2.3","term":2,"order":3,"keyQuestion":"If I can't see cells, how are they important?","stateOfBeing":"Scientist","linkedText":"","genre":"Inform","writingOutcome":"Non-chronological report about cells","planningStatus":"unknown","weekStart":6,"weekEnd":6},{"id":"2.4","term":2,"order":4,"keyQuestion":"How do Jewish people celebrate Hannukah?","stateOfBeing":"Citizen","linkedText":"","genre":"","writingOutcome":"","planningStatus":"unknown","weekStart":7,"weekEnd":7},{"id":"3.1","term":3,"order":1,"keyQuestion":"How do authors create characters we care about?","stateOfBeing":"Writer","linkedText":"Rose Blanche — Christophe Gallaz and Roberto Innocenti","genre":"Entertain","writingOutcome":"Dialogue to advance action","planningStatus":"unknown","weekStart":1,"weekEnd":2},{"id":"3.2","term":3,"order":2,"keyQuestion":"How did civilisation change throughout the Stone Age and Bronze Age?","stateOfBeing":"Historian","linkedText":"","genre":"Inform","writingOutcome":"Non-chronological report","planningStatus":"unknown","weekStart":3,"weekEnd":4},{"id":"3.3","term":3,"order":3,"keyQuestion":"Why can't I see in the dark?","stateOfBeing":"Scientist","linkedText":"","genre":"Explanation","writingOutcome":"Explain how we see things","planningStatus":"unknown","weekStart":5,"weekEnd":6},{"id":"4.1","term":4,"order":1,"keyQuestion":"How do authors draw in the reader?","stateOfBeing":"Writer","linkedText":"Wolf Brother — Michelle Paver","genre":"Entertain","writingOutcome":"Create atmosphere through description","planningStatus":"unknown","weekStart":1,"weekEnd":2},{"id":"4.2","term":4,"order":2,"keyQuestion":"What on Earth is a Varmint?","stateOfBeing":"Writer","linkedText":"Varmints — Helen Ward","genre":"Inform","writingOutcome":"Information about animals and their habitats","planningStatus":"unknown","weekStart":3,"weekEnd":4},{"id":"4.3","term":4,"order":3,"keyQuestion":"How are mountains formed?","stateOfBeing":"Geographer","linkedText":"","genre":"Explain","writingOutcome":"Explain the geographical process","planningStatus":"unknown","weekStart":5,"weekEnd":6},{"id":"5.1","term":5,"order":1,"keyQuestion":"How do authors create atmosphere and build tension?","stateOfBeing":"Writer","linkedText":"Skellig — David Almond","genre":"Entertain","writingOutcome":"Figurative language · character descriptions","planningStatus":"unknown","weekStart":1,"weekEnd":3},{"id":"5.2","term":5,"order":2,"keyQuestion":"How do journalists report the news?","stateOfBeing":"Writer","linkedText":"","genre":"Inform","writingOutcome":"Newspaper features","planningStatus":"unknown","weekStart":4,"weekEnd":5},{"id":"6.1","term":6,"order":1,"keyQuestion":"How do authors engage readers?","stateOfBeing":"Writer","linkedText":"The Phone Booth in Mr Hirota's Garden — Heather Smith","genre":"Entertain","writingOutcome":"Figurative language · character descriptions","planningStatus":"unknown","weekStart":1,"weekEnd":2},{"id":"6.2","term":6,"order":2,"keyQuestion":"How do authors retell their story?","stateOfBeing":"Writer","linkedText":"The Giant and the Sea","genre":"Inform","writingOutcome":"Letter to inform","planningStatus":"unknown","weekStart":3,"weekEnd":4},{"id":"6.3","term":6,"order":3,"keyQuestion":"How do authors build tension?","stateOfBeing":"Writer","linkedText":"The Lighthouse (Literacy Shed)","genre":"Entertain","writingOutcome":"Retelling of the animation","planningStatus":"unknown","weekStart":5,"weekEnd":5},{"id":"6.4","term":6,"order":4,"keyQuestion":"How do we change as we grow?","stateOfBeing":"Citizen","linkedText":"","genre":"","writingOutcome":"","planningStatus":"unknown","weekStart":6,"weekEnd":6},{"id":"6.5","term":6,"order":5,"keyQuestion":"How could we create a memorable yearbook magazine?","stateOfBeing":"Writer","linkedText":"","genre":"","writingOutcome":"","planningStatus":"unknown","weekStart":7,"weekEnd":7}]}};
+
+// ── Constants ─────────────────────────────────────────────────────────────────
+const TERM_WK  = [8, 7, 6, 6, 5, 7];   // weeks per term
+const TERM_NM  = ['Autumn 1','Autumn 2','Spring 1','Spring 2','Summer 1','Summer 2'];
+const TERM_GS  = [0, 8, 15, 21, 27, 32]; // global week start (0-indexed) per term
+const WEEK_W   = 34;   // px per week
+const TERM_GAP = 8;    // px between terms
+const YR_KEYS  = ['Y1','Y2','Y3','Y4','Y5','Y6'];
+
+const SOB_BG = {
+  Writer:             '#7c3aed',
+  Scientist:          '#0d9488',
+  Geographer:         '#15803d',
+  Historian:          '#c2410c',
+  Citizen:            '#dc2626',
+  'Computer Scientist':'#2563eb',
+  Artist:             '#db2777',
+  Designer:           '#6366f1',
+  Musician:           '#8b5cf6',
+  Linguist:           '#0891b2',
+  Athlete:            '#65a30d',
+};
+const SOB_ORDER = ['Writer','Scientist','Geographer','Historian','Citizen','Computer Scientist','Artist','Designer','Musician','Linguist','Athlete'];
+
+const SDOT = { new:'#dc2626', some:'#d97706', existing:'#16a34a', unknown:'#cbd5e1' };
+const SPILL = { new:'pill-new', some:'pill-some', existing:'pill-existing', unknown:'pill-unknown' };
+const SLB = { new:'New — needs building', some:'Some resources exist', existing:'Existing resources', unknown:'' };
+
+// ── App state ─────────────────────────────────────────────────────────────────
+let curYear = 'Y4', curView = 'timeline', curTerm = 1, selEnq = null;
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+const sc = s => SOB_BG[s] || '#64748b';
+const enqLeft  = e => (TERM_GS[e.term-1] + e.weekStart - 1) * WEEK_W;
+const enqWidth = e => Math.max(WEEK_W - 2, (e.weekEnd - e.weekStart + 1) * WEEK_W - 2);
+const termW    = i => TERM_WK[i] * WEEK_W;
+
+// ── Year bar ──────────────────────────────────────────────────────────────────
+function buildYearBar() {
+  const bar = document.getElementById('year-bar');
+  bar.innerHTML = '<span class="bar-label">Year group</span>';
+  YR_KEYS.forEach(k => {
+    const d = YEAR_DATA[k];
+    const active = k === curYear && curView !== 'cross';
+    const btn = document.createElement('button');
+    btn.className = 'year-chip' + (active ? ' active' : '');
+    btn.textContent = k + ' · ' + d.learningZone.replace(' Learning Zone','');
+    if (active) { btn.style.background = d.colour; btn.style.borderColor = d.colour; }
+    btn.onclick = () => { if (curView === 'cross') curView = 'timeline'; selectYear(k); };
+    bar.appendChild(btn);
+  });
+  const cx = document.createElement('button');
+  cx.className = 'cross-chip' + (curView === 'cross' ? ' active' : '');
+  cx.textContent = 'All years';
+  cx.onclick = () => selectView('cross');
+  bar.appendChild(cx);
+}
+
+// ── View switching ────────────────────────────────────────────────────────────
+function selectView(v) {
+  curView = v;
+  document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.view-tab').forEach(el => el.classList.remove('active'));
+  document.getElementById('view-' + v).classList.add('active');
+  [{v:'timeline',i:0},{v:'cards',i:1},{v:'cross',i:2}].forEach(({v:vv,i}) => {
+    if (vv === v) document.querySelectorAll('.view-tab')[i].classList.add('active');
+  });
+  buildYearBar();
+  if (v === 'timeline') renderTimeline();
+  else if (v === 'cards') { buildTermSel('cards'); renderCards(); }
+  else { buildTermSel('cross'); renderCross(); }
+  updateHash();
+}
+
+function selectYear(k) {
+  curYear = k; buildYearBar();
+  if (curView === 'timeline') renderTimeline();
+  else if (curView === 'cards') renderCards();
+  updateHash();
+}
+
+function selectTerm(t, v) {
+  curTerm = t;
+  document.querySelectorAll('.' + v + '-tc').forEach(el => el.classList.remove('active'));
+  document.getElementById(v + '-tc-' + t).classList.add('active');
+  if (v === 'cards') renderCards(); else renderCross();
+  updateHash();
+}
+
+function buildTermSel(v) {
+  const el = document.getElementById(v + '-term-sel');
+  el.innerHTML = '<span class="bar-label">Term</span>';
+  for (let t = 1; t <= 6; t++) {
+    const b = document.createElement('button');
+    b.className = 'term-chip ' + v + '-tc' + (t === curTerm ? ' active' : '');
+    b.id = v + '-tc-' + t;
+    b.textContent = 'T' + t + ' — ' + TERM_NM[t-1];
+    b.onclick = () => selectTerm(t, v);
+    el.appendChild(b);
+  }
+}
+
+// ── Timeline ──────────────────────────────────────────────────────────────────
+function renderTimeline() {
+  const d = YEAR_DATA[curYear];
+  const enqs = d.enquiries;
+  const states = SOB_ORDER.filter(s => enqs.some(e => e.stateOfBeing === s));
+  const el = document.getElementById('timeline-inner');
+
+  // Term header
+  let h = '<div class="tl-header-row"><div class="tl-sob-label-hdr"></div><div class="tl-term-header">';
+  TERM_WK.forEach((wk, i) => {
+    h += `<div class="tl-term-block" style="width:${termW(i)}px">T${i+1} · ${TERM_NM[i]}</div>`;
+  });
+  h += '</div></div>';
+
+  // Week numbers
+  h += '<div class="tl-weeks-row"><div class="tl-sob-label-wk"></div><div class="tl-week-hdr">';
+  TERM_WK.forEach(wk => {
+    h += '<div class="tl-term-wks">';
+    for (let w = 1; w <= wk; w++) h += `<div class="tl-wk-num">${w}</div>`;
+    h += '</div>';
+  });
+  h += '</div></div>';
+
+  // State rows
+  states.forEach(state => {
+    const bg = sc(state);
+    h += '<div class="tl-row"><div class="tl-sob-label">' + state + '</div><div class="tl-lanes">';
+    TERM_WK.forEach((wk, ti) => {
+      const term = ti + 1;
+      h += `<div class="tl-term-lane" style="width:${termW(ti)}px">`;
+      enqs.filter(e => e.stateOfBeing === state && e.term === term).forEach(e => {
+        const lx = (e.weekStart - 1) * WEEK_W;
+        const wx = enqWidth(e);
+        const sel = selEnq === e.id;
+        const dot = SDOT[e.planningStatus] || SDOT.unknown;
+        const shortQ = wx > 68 ? (e.keyQuestion.length > 26 ? e.keyQuestion.slice(0,24)+'…' : e.keyQuestion) : '';
+        h += `<div class="tl-block${sel?' selected':''}" style="left:${lx}px;width:${wx}px;background:${bg};color:#fff" onclick="openDetail('${e.id}')" title="${e.id}: ${e.keyQuestion}">`;
+        h += `<span class="tl-bid">${e.id}</span>`;
+        if (shortQ) h += `<span class="tl-bq">${shortQ}</span>`;
+        h += `<span class="tl-dot" style="background:${dot}"></span>`;
+        h += '</div>';
+      });
+      h += '</div>';
+    });
+    h += '</div></div>';
+  });
+
+  el.innerHTML = h;
+}
+
+// ── Detail panel ──────────────────────────────────────────────────────────────
+function openDetail(id) {
+  selEnq = id;
+  const e = YEAR_DATA[curYear].enquiries.find(x => x.id === id);
+  if (!e) return;
+  const bg = sc(e.stateOfBeing);
+  const wkTxt = e.weekStart === e.weekEnd ? `T${e.term} · week ${e.weekStart}` : `T${e.term} · weeks ${e.weekStart}–${e.weekEnd}`;
+
+  let h = `<div class="dp-header">
+    <span class="dp-badge" style="background:${bg}">${e.stateOfBeing}</span>
+    <div>
+      <div style="font-size:11px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Enquiry ${e.id} &middot; ${wkTxt}</div>
+      <div class="dp-title">${e.keyQuestion}</div>
+    </div>
+  </div><div class="dp-meta">`;
+
+  if (e.linkedText) h += `<div class="dp-mi"><div class="dp-ml">Linked text</div><div class="dp-mv">${e.linkedText}</div></div>`;
+  if (e.genre)      h += `<div class="dp-mi"><div class="dp-ml">Genre</div><div class="dp-mv">${e.genre}</div></div>`;
+  if (e.writingOutcome) h += `<div class="dp-mi"><div class="dp-ml">Writing outcome</div><div class="dp-mv">${e.writingOutcome}</div></div>`;
+  if (SLB[e.planningStatus]) h += `<div class="dp-mi"><div class="dp-ml">Planning</div><div class="dp-mv"><span class="dp-status-pill ${SPILL[e.planningStatus]}">${SLB[e.planningStatus]}</span></div></div>`;
+
+  h += '</div>';
+  document.getElementById('detail-content').innerHTML = h;
+  document.getElementById('detail-panel').classList.add('open');
+  renderTimeline();
+}
+
+function closeDetail() {
+  selEnq = null;
+  document.getElementById('detail-panel').classList.remove('open');
+}
+
+// ── Cards ─────────────────────────────────────────────────────────────────────
+function renderCards() {
+  const enqs = YEAR_DATA[curYear].enquiries.filter(e => e.term === curTerm);
+  const grid = document.getElementById('cards-grid');
+  if (!enqs.length) { grid.innerHTML = '<div class="empty-state"><h3>No enquiries planned for this term</h3></div>'; return; }
+  grid.innerHTML = enqs.map(e => {
+    const bg = sc(e.stateOfBeing);
+    const dot = SDOT[e.planningStatus] || SDOT.unknown;
+    const wk = e.weekStart === e.weekEnd ? `W${e.weekStart}` : `W${e.weekStart}–W${e.weekEnd}`;
+    return `<div class="card" onclick="openCardDetail('${e.id}')">
+      <div class="card-hdr">
+        <span class="card-id">${e.id} · ${wk}</span>
+        <span class="card-sob" style="background:${bg}">${e.stateOfBeing}</span>
+        <span class="card-sdot" style="background:${dot}"></span>
+      </div>
+      <div class="card-title">${e.keyQuestion}</div>
+      ${e.linkedText ? `<div class="card-row"><strong>Text:</strong> ${e.linkedText}</div>` : ''}
+      ${e.genre ? `<div class="card-row"><strong>Genre:</strong> ${e.genre}</div>` : ''}
+      ${e.writingOutcome ? `<div class="card-row"><strong>Writing:</strong> ${e.writingOutcome}</div>` : ''}
+    </div>`;
+  }).join('');
+}
+
+function openCardDetail(id) {
+  selEnq = id; selectView('timeline'); openDetail(id);
+}
+
+// ── Cross-year ────────────────────────────────────────────────────────────────
+function renderCross() {
+  const t = curTerm;
+  const allE = YR_KEYS.flatMap(k => (YEAR_DATA[k]?.enquiries||[]).filter(e => e.term === t));
+  const states = SOB_ORDER.filter(s => allE.some(e => e.stateOfBeing === s));
+  const grid = document.getElementById('cross-grid');
+  if (!states.length) { grid.innerHTML = '<div class="empty-state"><h3>No enquiries for this term</h3></div>'; return; }
+
+  const cols = '140px ' + YR_KEYS.map(() => '1fr').join(' ');
+  let h = '<div class="cross-grid">';
+
+  // Header
+  h += `<div class="cross-hdr-row" style="display:grid;grid-template-columns:${cols};gap:8px">`;
+  h += '<div></div>';
+  YR_KEYS.forEach(k => {
+    const d = YEAR_DATA[k];
+    h += `<div style="text-align:center;font-size:12px;font-weight:800;color:${d.colour};padding:6px 0">${k}<br><span style="font-weight:600;color:#64748b;font-size:11px">${d.learningZone.replace(' Learning Zone','')}</span></div>`;
+  });
+  h += '</div>';
+
+  states.forEach(state => {
+    const bg = sc(state);
+    h += `<div class="cross-row" style="display:grid;grid-template-columns:${cols};gap:8px;margin-bottom:10px">`;
+    h += `<div class="cross-sob-label"><span class="cross-sob-pill" style="background:${bg}">${state}</span></div>`;
+    YR_KEYS.forEach(k => {
+      const enqs = (YEAR_DATA[k]?.enquiries||[]).filter(e => e.term === t && e.stateOfBeing === state);
+      if (!enqs.length) { h += '<div class="cross-cell-empty"></div>'; return; }
+      // Wrap all enquiries for this year in a single grid cell
+      h += '<div style="display:flex;flex-direction:column;gap:6px">';
+      enqs.forEach(e => {
+        h += `<div class="cross-cell" onclick="switchToYear('${k}','${e.id}')">
+          <div class="c-id">${e.id}</div>
+          <div class="c-q">${e.keyQuestion}</div>
+          ${e.linkedText ? `<div class="c-text">${e.linkedText.split('·')[0].trim()}</div>` : ''}
+        </div>`;
+      });
+      h += '</div>';
+    });
+    h += '</div>';
+  });
+
+  h += '</div>';
+  grid.innerHTML = h;
+}
+
+function switchToYear(k, id) { curYear = k; selectView('timeline'); openDetail(id); }
+
+// ── Hash routing ──────────────────────────────────────────────────────────────
+function updateHash() {
+  if (curView === 'cross') history.replaceState(null,'','#/cross/t'+curTerm);
+  else {
+    let h = '#/' + curYear.toLowerCase();
+    if (curView !== 'timeline') h += '/' + curView + '/t' + curTerm;
+    history.replaceState(null,'',h);
+  }
+}
+function readHash() {
+  const p = location.hash.replace('#/','').split('/');
+  if (!p[0]) return;
+  if (p[0]==='cross') { curView='cross'; if(p[1]) curTerm=parseInt(p[1].replace('t',''))||1; }
+  else {
+    const k = p[0].toUpperCase();
+    if (YEAR_DATA[k]) curYear = k;
+    if (p[1]==='cards'||p[1]==='timeline') curView=p[1];
+    if (p[1]==='cards'||p[1]==='cross') { if(p[2]) curTerm=parseInt(p[2].replace('t',''))||1; }
+  }
+}
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+readHash();
+buildYearBar();
+if (curView==='timeline') renderTimeline();
+else if (curView==='cards') { buildTermSel('cards'); renderCards(); }
+else { buildTermSel('cross'); renderCross(); }
+[{v:'timeline',i:0},{v:'cards',i:1},{v:'cross',i:2}].forEach(({v,i}) => {
+  if (v===curView) document.querySelectorAll('.view-tab')[i].classList.add('active');
+  else document.querySelectorAll('.view-tab')[i].classList.remove('active');
+});
+document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
+document.getElementById('view-'+curView).classList.add('active');
+</script>
+</body>
+</html>
