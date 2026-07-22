@@ -77,43 +77,61 @@ nav .spacer { flex: 1; }
 .view { display: none; }
 .view.active { display: block; }
 
-/* ── Timeline view ── */
+/* ── Year overview ── */
 #view-timeline { overflow: hidden; }
-.timeline-scroll { overflow-x: auto; padding: 0 20px 20px; }
-.timeline-inner { min-width: max-content; }
+.yog-scroll { padding: 20px; }
 
-.tl-header-row { display: flex; align-items: stretch; height: 28px; margin-top: 16px; }
-.tl-sob-label-hdr { width: 150px; flex-shrink: 0; }
-.tl-term-header { display: flex; gap: 8px; }
-.tl-term-block {
-  display: flex; align-items: center; justify-content: center;
-  background: #f1f5f9; border-radius: 6px 6px 0 0;
-  font-size: 11px; font-weight: 800; color: #475569; text-transform: uppercase; letter-spacing: .5px;
+.yog-term { margin-bottom: 32px; }
+.yog-term-hdr {
+  display: flex; align-items: center; gap: 12px;
+  font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .6px;
+  color: #64748b; margin-bottom: 10px;
 }
+.yog-term-hdr::after { content: ''; flex: 1; height: 1px; background: #e2e8f0; }
+.yog-wk-ruler { display: flex; margin-left: 130px; margin-bottom: 4px; }
+.yog-wk-cell { flex: 1; text-align: center; font-size: 10px; font-weight: 600;
+  color: #cbd5e1; border-left: 1px solid #e2e8f0; padding: 0 0 4px; }
+.yog-wk-cell:first-child { border-left: none; }
 
-.tl-weeks-row { display: flex; align-items: center; height: 22px; margin-bottom: 6px; }
-.tl-sob-label-wk { width: 150px; flex-shrink: 0; }
-.tl-week-hdr { display: flex; gap: 8px; }
-.tl-term-wks { display: flex; }
-.tl-wk-num { width: 34px; font-size: 10px; font-weight: 600; color: #94a3b8; text-align: center; flex-shrink: 0; }
-
-.tl-row { display: flex; align-items: center; margin-bottom: 6px; min-height: 46px; }
-.tl-sob-label { width: 150px; flex-shrink: 0; font-size: 11px; font-weight: 700;
-  color: #64748b; padding-right: 12px; text-align: right; line-height: 1.2; }
-.tl-lanes { display: flex; gap: 8px; }
-.tl-term-lane { position: relative; height: 46px; flex-shrink: 0; background: #f1f5f9; border-radius: 4px; }
-.tl-block {
-  position: absolute; top: 4px; height: 38px; border-radius: 6px;
-  display: flex; align-items: center; padding: 0 8px; gap: 5px;
-  cursor: pointer; transition: transform .1s, box-shadow .1s;
-  overflow: hidden;
+.yog-sob-row { display: flex; align-items: stretch; margin-bottom: 6px; min-height: 76px; }
+.yog-sob-lbl {
+  width: 130px; flex-shrink: 0;
+  font-size: 11px; font-weight: 700; color: #64748b;
+  padding: 10px 12px 0 0; text-align: right; line-height: 1.3;
 }
-.tl-block:hover { transform: translateY(-1px); box-shadow: 0 4px 14px rgba(0,0,0,.25); }
-.tl-block.selected { box-shadow: 0 0 0 3px #fff, 0 0 0 5px #0f172a; }
-.tl-bid { font-size: 11px; font-weight: 800; opacity: .9; white-space: nowrap; flex-shrink: 0; }
-.tl-bq { font-size: 11px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; opacity: .85; }
-.tl-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; margin-left: auto;
-  border: 1.5px solid rgba(255,255,255,.5); }
+.yog-lane {
+  flex: 1; position: relative; min-height: 76px;
+  background: #f1f5f9; border-radius: 6px; overflow: hidden;
+}
+.yog-wk-guide {
+  position: absolute; top: 0; bottom: 0; width: 1px;
+  background: rgba(255,255,255,.7); pointer-events: none;
+}
+.yog-block {
+  position: absolute; top: 5px; bottom: 5px;
+  border-radius: 6px; padding: 7px 10px 7px 9px;
+  cursor: pointer; transition: transform .12s, box-shadow .12s;
+  display: flex; flex-direction: column; gap: 2px; overflow: hidden;
+}
+.yog-block:hover { transform: translateY(-1px); box-shadow: 0 5px 18px rgba(0,0,0,.28); }
+.yog-block.selected { box-shadow: 0 0 0 3px #fff, 0 0 0 5px #0f172a; }
+.yog-b-id {
+  font-size: 10px; font-weight: 800;
+  color: rgba(255,255,255,.65); line-height: 1; flex-shrink: 0;
+}
+.yog-b-q {
+  font-size: 12px; font-weight: 700; color: #fff; line-height: 1.35;
+  display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+}
+.yog-b-text {
+  font-size: 11px; color: rgba(255,255,255,.65); margin-top: auto;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex-shrink: 0;
+}
+.yog-b-dot {
+  position: absolute; top: 7px; right: 7px;
+  width: 7px; height: 7px; border-radius: 50%;
+  border: 1.5px solid rgba(255,255,255,.5); flex-shrink: 0;
+}
 
 /* ── Detail panel ── */
 #detail-panel {
@@ -200,7 +218,7 @@ footer strong { color: #64748b; }
     </div>
   </a>
   <div class="spacer"></div>
-  <div class="nav-version">22.07.26a</div>
+  <div class="nav-version">22.07.26b</div>
 </nav>
 
 <div id="year-bar">
@@ -208,14 +226,14 @@ footer strong { color: #64748b; }
 </div>
 
 <div id="view-tabs">
-  <button class="view-tab active" onclick="selectView('timeline')">39-week timeline</button>
+  <button class="view-tab active" onclick="selectView('timeline')">Year overview</button>
   <button class="view-tab" onclick="selectView('cards')">Enquiry cards</button>
   <button class="view-tab" onclick="selectView('cross')">Cross-year view</button>
 </div>
 
 <div id="view-timeline" class="view active">
-  <div class="timeline-scroll">
-    <div class="timeline-inner" id="timeline-inner"></div>
+  <div class="yog-scroll">
+    <div id="timeline-inner"></div>
   </div>
   <div id="detail-panel">
     <button class="dp-close" onclick="closeDetail()">&#x2715;</button>
@@ -243,7 +261,7 @@ footer strong { color: #64748b; }
 
 <footer>
   <span>WFA Curriculum Planner &mdash; 2025&ndash;26</span>
-  <strong>22.07.26a</strong>
+  <strong>22.07.26b</strong>
 </footer>
 
 <script>
@@ -351,52 +369,56 @@ function buildTermSel(v) {
   }
 }
 
-// ── Timeline ──────────────────────────────────────────────────────────────────
+// ── Year overview ─────────────────────────────────────────────────────────────────────────────
 function renderTimeline() {
   const d = YEAR_DATA[curYear];
   const enqs = d.enquiries;
-  const states = SOB_ORDER.filter(s => enqs.some(e => e.stateOfBeing === s));
   const el = document.getElementById('timeline-inner');
+  let h = '';
 
-  // Term header
-  let h = '<div class="tl-header-row"><div class="tl-sob-label-hdr"></div><div class="tl-term-header">';
-  TERM_WK.forEach((wk, i) => {
-    h += `<div class="tl-term-block" style="width:${termW(i)}px">T${i+1} · ${TERM_NM[i]}</div>`;
-  });
-  h += '</div></div>';
+  for (let ti = 0; ti < 6; ti++) {
+    const term = ti + 1;
+    const wkCount = TERM_WK[ti];
+    const termEnqs = enqs.filter(e => e.term === term);
+    if (!termEnqs.length) continue;
+    const activeStates = SOB_ORDER.filter(s => termEnqs.some(e => e.stateOfBeing === s));
 
-  // Week numbers
-  h += '<div class="tl-weeks-row"><div class="tl-sob-label-wk"></div><div class="tl-week-hdr">';
-  TERM_WK.forEach(wk => {
-    h += '<div class="tl-term-wks">';
-    for (let w = 1; w <= wk; w++) h += `<div class="tl-wk-num">${w}</div>`;
-    h += '</div>';
-  });
-  h += '</div></div>';
+    h += `<div class="yog-term">`;
+    h += `<div class="yog-term-hdr">T${term} &middot; ${TERM_NM[ti]} &middot; ${wkCount} weeks</div>`;
 
-  // State rows
-  states.forEach(state => {
-    const bg = sc(state);
-    h += '<div class="tl-row"><div class="tl-sob-label">' + state + '</div><div class="tl-lanes">';
-    TERM_WK.forEach((wk, ti) => {
-      const term = ti + 1;
-      h += `<div class="tl-term-lane" style="width:${termW(ti)}px">`;
-      enqs.filter(e => e.stateOfBeing === state && e.term === term).forEach(e => {
-        const lx = (e.weekStart - 1) * WEEK_W;
-        const wx = enqWidth(e);
-        const sel = selEnq === e.id;
+    // Week ruler
+    h += `<div class="yog-wk-ruler">`;
+    for (let w = 1; w <= wkCount; w++) h += `<div class="yog-wk-cell">${w}</div>`;
+    h += `</div>`;
+
+    activeStates.forEach(state => {
+      const bg = sc(state);
+      const stateEnqs = termEnqs.filter(e => e.stateOfBeing === state);
+      h += `<div class="yog-sob-row">`;
+      h += `<div class="yog-sob-lbl">${state}</div>`;
+      h += `<div class="yog-lane">`;
+      for (let w = 1; w < wkCount; w++) {
+        h += `<div class="yog-wk-guide" style="left:calc(${(w/wkCount)*100}%)"></div>`;
+      }
+      stateEnqs.forEach(e => {
+        const leftPct = ((e.weekStart - 1) / wkCount) * 100;
+        const widthPct = ((e.weekEnd - e.weekStart + 1) / wkCount) * 100;
         const dot = SDOT[e.planningStatus] || SDOT.unknown;
-        const shortQ = wx > 68 ? (e.keyQuestion.length > 26 ? e.keyQuestion.slice(0,24)+'…' : e.keyQuestion) : '';
-        h += `<div class="tl-block${sel?' selected':''}" style="left:${lx}px;width:${wx}px;background:${bg};color:#fff" onclick="openDetail('${e.id}')" title="${e.id}: ${e.keyQuestion}">`;
-        h += `<span class="tl-bid">${e.id}</span>`;
-        if (shortQ) h += `<span class="tl-bq">${shortQ}</span>`;
-        h += `<span class="tl-dot" style="background:${dot}"></span>`;
-        h += '</div>';
+        const sel = selEnq === e.id;
+        h += `<div class="yog-block${sel?' selected':''}"
+          style="left:calc(${leftPct}% + 3px);width:calc(${widthPct}% - 6px);background:${bg}"
+          onclick="openDetail('${e.id}')" title="${e.id}: ${e.keyQuestion}">`;
+        h += `<div class="yog-b-id">${e.id}</div>`;
+        h += `<div class="yog-b-q">${e.keyQuestion}</div>`;
+        if (e.linkedText) h += `<div class="yog-b-text">${e.linkedText.split('·')[0].trim()}</div>`;
+        h += `<div class="yog-b-dot" style="background:${dot}"></div>`;
+        h += `</div>`;
       });
-      h += '</div>';
+      h += `</div></div>`;
     });
-    h += '</div></div>';
-  });
+
+    h += `</div>`;
+  }
 
   el.innerHTML = h;
 }
