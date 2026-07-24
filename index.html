@@ -403,7 +403,7 @@
 <!-- ── Nav ── -->
 <nav>
   <a class="nav-logo" href="#">
-    <img src="https://cdn.jsdelivr.net/gh/wallscourtfarm/wfa-shared@main/web/wfa_logo.webp" alt="WFA" style="width:44px;height:44px;border-radius:8px;flex-shrink:0">
+    <img src="https://cdn.jsdelivr.net/gh/wallscourtfarm/wfa-shared@main/web/wfa_logo.webp" alt="WFA" style="height:44px;width:auto;border-radius:8px;flex-shrink:0">
     <div>
       <div class="nav-title">WFA Curriculum Planner</div>
       <div class="nav-sub">Wallscourt Farm Academy</div>
@@ -413,7 +413,7 @@
   <div class="nav-spacer"></div>
   <button class="nav-export-btn" onclick="exportJSON()">Export JSON</button>
   <button class="nav-export-btn" onclick="openImporter()" style="background:#dcfce7;color:#166534;border-color:#bbf7d0">Import Excel</button>
-  <span class="nav-version">24.07.26h</span>
+  <span class="nav-version">24.07.26i</span>
 </nav>
 
 <!-- ── Year chips (second row) ── -->
@@ -424,7 +424,7 @@
 
 <footer>
   <span>WFA Curriculum Planner &mdash; 2025&ndash;26 &mdash; Wallscourt Farm Academy</span>
-  <strong>24.07.26h</strong>
+  <strong>24.07.26i</strong>
 </footer>
 
 <!-- ── Edit modal ── -->
@@ -3386,6 +3386,7 @@ const SOB_ICON = {
   Linguist:           'icons/linguist.png',
   Athlete:            'icons/athlete.png',
   Mathematician:      'icons/mathematician.png',
+  Spelling:           'icons/writer.png',
 };
 function sobImg(state, size=20) {
   const src = SOB_ICON[state];
@@ -3414,8 +3415,7 @@ const WIDER_DEF = [
   { key:'dt',        icon:'🔧',  name:'Designer',            colour:'#0891b2', rows:[{label:'Unit'}] },
   { key:'music',     icon:'🎵',  name:'Musician',            colour:'#db2777', rows:[{label:'Unit'},{label:'Key skills'}] },
   { key:'pe',        icon:'🏃',  name:'Athlete',             colour:'#065f46', rows:[{label:'Strand'},{label:'Activity'}] },
-  { key:'re',        icon:'✡️', name:'RE',      group:'Citizen',          colour:'#6366f1', rows:[{label:'Religion'},{label:'Key question'},{label:'Content'}] },
-  { key:'pshe',      icon:'💛',  name:'PSHE',    group:'Citizen',          colour:'#4d7c0f', rows:[{label:'Theme'},{label:'Content focus'}] },
+
   { key:'mfl',       icon:'🌐',  name:'Linguist',            colour:'#be185d', rows:[{label:'Context'}] },
   { key:'oracy',     icon:'🗣️', name:'Oracy',               colour:'#0369a1', rows:[{label:'Strand'},{label:'Outcome'}] },
   { key:'spelling',  icon:'🔤',  name:'Spelling', group:'Writer',          colour:'#92400e', rows:[{label:'Weekly pattern'}] },
