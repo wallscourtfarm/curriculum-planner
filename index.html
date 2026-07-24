@@ -193,7 +193,7 @@
   .card-edit-btn:hover { background: var(--light-grey); }
 
   /* ── Wider curriculum tables ── */
-  .wider-section { background: #fff; border-radius: 12px; border: 1px solid var(--border); overflow: hidden; margin-bottom: 18px; }
+  .wider-section { background: #fff; border-radius: 12px; border: 1px solid var(--border); overflow: hidden; margin-bottom: 18px; scroll-margin-top: 72px; }
   .wider-header { display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-bottom: 1px solid var(--border); font-weight: 800; font-size: 14px; }
   .wider-icon { font-size: 17px; }
   .wider-table { display: grid; grid-template-columns: 110px repeat(6, 1fr); overflow-x: auto; }
@@ -415,7 +415,7 @@
   <div class="nav-spacer"></div>
   <button class="nav-export-btn" onclick="exportJSON()">Export JSON</button>
   <button class="nav-export-btn" onclick="openImporter()" style="background:#dcfce7;color:#166534;border-color:#bbf7d0">Import Excel</button>
-  <span class="nav-version">24.07.26l</span>
+  <span class="nav-version">24.07.26m</span>
 </nav>
 
 <!-- ── Year chips (second row) ── -->
@@ -426,7 +426,7 @@
 
 <footer>
   <span>WFA Curriculum Planner &mdash; 2025&ndash;26 &mdash; Wallscourt Farm Academy</span>
-  <strong>24.07.26l</strong>
+  <strong>24.07.26m</strong>
 </footer>
 
 <!-- ── Edit modal ── -->
@@ -3568,7 +3568,7 @@ function renderYear(k) {
       const w = WIDER_DEF.find(x => x.key === item.key);
       if (!w) return;
       const wi = SOB_ICON[w.name] ? sobImg(w.name, 14) : w.icon;
-      h += `<a class="nav-link" href="#s-wider-${w.key}">${wi} ${w.name}</a>`;
+      h += `<a class="nav-link" href="#s-wider-${w.key}" style="border-color:${w.colour};color:${w.colour}">${wi} ${w.name}</a>`;
     }
   });
   h += `</div>`;
