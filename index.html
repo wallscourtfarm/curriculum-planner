@@ -413,7 +413,7 @@
   <div class="nav-spacer"></div>
   <button class="nav-export-btn" onclick="exportJSON()">Export JSON</button>
   <button class="nav-export-btn" onclick="openImporter()" style="background:#dcfce7;color:#166534;border-color:#bbf7d0">Import Excel</button>
-  <span class="nav-version">24.07.26g</span>
+  <span class="nav-version">24.07.26h</span>
 </nav>
 
 <!-- ── Year chips (second row) ── -->
@@ -424,7 +424,7 @@
 
 <footer>
   <span>WFA Curriculum Planner &mdash; 2025&ndash;26 &mdash; Wallscourt Farm Academy</span>
-  <strong>24.07.26g</strong>
+  <strong>24.07.26h</strong>
 </footer>
 
 <!-- ── Edit modal ── -->
@@ -3385,6 +3385,7 @@ const SOB_ICON = {
   Musician:           'icons/musician.png',
   Linguist:           'icons/linguist.png',
   Athlete:            'icons/athlete.png',
+  Mathematician:      'icons/mathematician.png',
 };
 function sobImg(state, size=20) {
   const src = SOB_ICON[state];
@@ -3532,11 +3533,13 @@ function renderYear(k) {
     const m = SOB_META[s];
     h += `<a class="nav-link" href="#s-${s.toLowerCase().replace(/ /g,'-')}" style="border-color:${sobBg(s)};color:${sobBg(s)}">${sobImg(s,16)} ${s}</a>`;
     WIDER_DEF.filter(w => w.group === s).forEach(w => {
-      h += `<a class="nav-sub-link" href="#s-wider-${w.key}">${w.icon} ${w.name}</a>`;
+      const wi = SOB_ICON[w.name] ? sobImg(w.name, 14) : w.icon;
+      h += `<a class="nav-sub-link" href="#s-wider-${w.key}">${wi} ${w.name}</a>`;
     });
   });
   WIDER_DEF.filter(w => !w.group).forEach(w => {
-    h += `<a class="nav-link" href="#s-wider-${w.key}">${w.icon} ${w.name}</a>`;
+    const wi = SOB_ICON[w.name] ? sobImg(w.name, 14) : w.icon;
+    h += `<a class="nav-link" href="#s-wider-${w.key}">${wi} ${w.name}</a>`;
   });
   h += `</div>`;
 
@@ -3648,7 +3651,8 @@ function renderGlanceGrid(k, enqs, yc, yd, yl, activeStates) {
     }
     // Sub-wider rows grouped under this SOB
     WIDER_DEF.filter(w => w.group === state).forEach(w => {
-      h += `<div class="grid-cell grid-subject grid-sub-subject" style="color:${w.colour}">${w.icon} ${w.name}</div>`;
+      const wi = SOB_ICON[w.name] ? sobImg(w.name, 14) : w.icon;
+      h += `<div class="grid-cell grid-subject grid-sub-subject" style="color:${w.colour}">${wi} ${w.name}</div>`;
       for (let t = 0; t < 6; t++) {
         const firstRow = w.rows[0];
         const val = getWiderCell(k, w.key, firstRow.label, t);
@@ -3663,7 +3667,8 @@ function renderGlanceGrid(k, enqs, yc, yd, yl, activeStates) {
 
   // Wider curriculum rows (editable) — ungrouped only
   WIDER_DEF.filter(w => !w.group).forEach(w => {
-    h += `<div class="grid-cell grid-subject" style="color:${w.colour}">${w.icon} ${w.name}</div>`;
+    const wi = SOB_ICON[w.name] ? sobImg(w.name, 14) : w.icon;
+    h += `<div class="grid-cell grid-subject" style="color:${w.colour}">${wi} ${w.name}</div>`;
     for (let t = 0; t < 6; t++) {
       // Show first row's content for this term
       const firstRow = w.rows[0];
