@@ -437,7 +437,7 @@
   <div class="nav-spacer"></div>
   <button class="nav-export-btn" onclick="exportJSON()">Export JSON</button>
   <button class="nav-export-btn" onclick="openImporter()" style="background:#dcfce7;color:#166534;border-color:#bbf7d0">Import Excel</button>
-  <span class="nav-version">24.07.26v</span>
+  <span class="nav-version">24.07.26w</span>
 </nav>
 
 <!-- ── Year chips (second row) ── -->
@@ -3837,12 +3837,23 @@ function renderGlanceGrid(k, enqs, yc, yd, yl, activeStates) {
       h += `<div class="grid-cell grid-subject" style="color:${w.colour}">${wi} ${w.name}</div>`;
     for (let t = 0; t < 6; t++) {
       const firstRow = w.rows[0];
-      const val = getWiderCell(k, w.key, firstRow.label, t);
       const last = t === 5 ? ' no-right' : '';
-      h += `<div class="grid-cell cell-wider${last}" onclick="openWiderEdit('${k}','${w.key}','${firstRow.label}',${t})">
-        <button class="cell-edit-btn" onclick="event.stopPropagation();openWiderEdit('${k}','${w.key}','${firstRow.label}',${t})">✏️</button>
-        ${val ? `<div class="cell-text">${esc(val)}</div>` : `<div class="edit-hint">Add content…</div>`}
-      </div>`;
+      if (w.key === 'reader') {
+        const lines = w.rows.map(row => {
+          const v = getWiderCell(k, w.key, row.label, t);
+          return v ? `<span style="display:block;font-size:10px;line-height:1.3">${esc(v)}</span>` : '';
+        }).filter(Boolean).join('');
+        h += `<div class="grid-cell cell-wider${last}" onclick="openWiderEdit('${k}','reader','Writing linked texts',${t})">
+          <button class="cell-edit-btn" onclick="event.stopPropagation();openWiderEdit('${k}','reader','Writing linked texts',${t})">✏️</button>
+          ${lines || `<div class="edit-hint">Add texts…</div>`}
+        </div>`;
+      } else {
+        const val = getWiderCell(k, w.key, firstRow.label, t);
+        h += `<div class="grid-cell cell-wider${last}" onclick="openWiderEdit('${k}','${w.key}','${firstRow.label}',${t})">
+          <button class="cell-edit-btn" onclick="event.stopPropagation();openWiderEdit('${k}','${w.key}','${firstRow.label}',${t})">✏️</button>
+          ${val ? `<div class="cell-text">${esc(val)}</div>` : `<div class="edit-hint">Add content…</div>`}
+        </div>`;
+      }
     }
   }
   });
@@ -4049,19 +4060,38 @@ const READER_META = {
 };
 
 function openWiderEdit(k, wkey, rowLabel, termIdx) {
-  const val = getWiderCell(k, wkey, rowLabel, termIdx);
   const w = WIDER_DEF.find(x => x.key === wkey);
   const termName = TERM_NM[termIdx];
 
-  const readerMeta = wkey === 'reader' ? READER_META[rowLabel] : null;
-  const hint = readerMeta ? readerMeta.hint : 'Plain text. Each line becomes a separate bullet when displayed.';
-  const placeholder = readerMeta ? readerMeta.placeholder : '';
+  if (wkey === 'reader') {
+    const body = w.rows.map(row => {
+      const meta = READER_META[row.label] || {};
+      const val = getWiderCell(k, wkey, row.label, termIdx);
+      const fieldId = 'wf_reader_' + row.label.replace(/\W+/g,'_');
+      return `
+        <div class="modal-field">
+          <label>${row.label}</label>
+          <textarea id="${fieldId}" rows="2" placeholder="${esc(meta.placeholder||'')}">${esc(val)}</textarea>
+          <div class="modal-hint">${meta.hint||''}</div>
+        </div>`;
+    }).join('');
 
+    openModal(`Reader · ${termName}`, body, () => {
+      w.rows.forEach(row => {
+        const fieldId = 'wf_reader_' + row.label.replace(/\W+/g,'_');
+        saveWiderCell(k, wkey, row.label, termIdx, document.getElementById(fieldId).value);
+      });
+      renderYear(k);
+    });
+    return;
+  }
+
+  const val = getWiderCell(k, wkey, rowLabel, termIdx);
   const body = `
     <div class="modal-field">
       <label>${w ? w.name : wkey} — ${rowLabel} — ${termName}</label>
-      <textarea id="wf-val" rows="4" placeholder="${esc(placeholder)}">${esc(val)}</textarea>
-      <div class="modal-hint">${hint}</div>
+      <textarea id="wf-val" rows="4">${esc(val)}</textarea>
+      <div class="modal-hint">Plain text. Each line becomes a separate bullet when displayed.</div>
     </div>`;
 
   openModal(`Edit: ${rowLabel} · ${termName}`, body, () => {
