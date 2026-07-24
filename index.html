@@ -137,6 +137,7 @@
   .subject-header {
     display: flex; align-items: center; gap: 12px;
     margin: 36px 0 14px; padding-bottom: 10px; border-bottom: 3px solid;
+    scroll-margin-top: 72px;
   }
   .subject-header h2 { font-size: 19px; font-weight: 900; }
   .subject-desc { font-size: 13px; color: var(--grey); margin-bottom: 18px; line-height: 1.6; }
@@ -145,6 +146,7 @@
   .enquiry-card {
     background: #fff; border-radius: 12px; border: 1px solid var(--border);
     margin-bottom: 18px; overflow: hidden; position: relative;
+    scroll-margin-top: 72px;
   }
   .enquiry-header {
     display: flex; align-items: flex-start; gap: 14px;
@@ -413,7 +415,7 @@
   <div class="nav-spacer"></div>
   <button class="nav-export-btn" onclick="exportJSON()">Export JSON</button>
   <button class="nav-export-btn" onclick="openImporter()" style="background:#dcfce7;color:#166534;border-color:#bbf7d0">Import Excel</button>
-  <span class="nav-version">24.07.26k</span>
+  <span class="nav-version">24.07.26l</span>
 </nav>
 
 <!-- ── Year chips (second row) ── -->
@@ -424,7 +426,7 @@
 
 <footer>
   <span>WFA Curriculum Planner &mdash; 2025&ndash;26 &mdash; Wallscourt Farm Academy</span>
-  <strong>24.07.26k</strong>
+  <strong>24.07.26l</strong>
 </footer>
 
 <!-- ── Edit modal ── -->
@@ -3374,8 +3376,8 @@ const TERM_GS  = [0, 8, 15, 21, 27, 32];
 const YR_KEYS  = ['Y1','Y2','Y3','Y4','Y5','Y6'];
 
 const SOB_BG = {
-  Writer:'#7c3aed', Scientist:'#0d9488', Geographer:'#15803d',
-  Historian:'#c2410c', Citizen:'#dc2626', 'Computer Scientist':'#2563eb',
+  Writer:'#1d4ed8', Scientist:'#0d9488', Geographer:'#15803d',
+  Historian:'#c2410c', Citizen:'#dc2626', 'Computer Scientist':'#7c3aed',
   Artist:'#db2777', Designer:'#6366f1', Musician:'#8b5cf6',
   Linguist:'#0891b2', Athlete:'#65a30d'
 };
@@ -3418,7 +3420,7 @@ const SOB_META = {
 };
 
 const WIDER_DEF = [
-  { key:'maths',     icon:'➕',  name:'Mathematician',       colour:'#7c3aed', rows:[{label:'Weekly sequence'}] },
+  { key:'maths',     icon:'➕',  name:'Mathematician',       colour:'#ca8a04', rows:[{label:'Weekly sequence'}] },
   { key:'art',       icon:'🎨',  name:'Artist',              colour:'#b45309', rows:[{label:'Unit'},{label:'Key vocabulary'}] },
   { key:'dt',        icon:'🔧',  name:'Designer',            colour:'#0891b2', rows:[{label:'Unit'}] },
   { key:'music',     icon:'🎵',  name:'Musician',            colour:'#db2777', rows:[{label:'Unit'},{label:'Key skills'}] },
