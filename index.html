@@ -196,7 +196,7 @@
   .wider-section { background: #fff; border-radius: 12px; border: 1px solid var(--border); overflow: hidden; margin-bottom: 18px; scroll-margin-top: 72px; }
   .wider-header { display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-bottom: 1px solid var(--border); font-weight: 800; font-size: 14px; }
   .wider-icon { font-size: 17px; }
-  .wider-table { display: grid; grid-template-columns: 110px repeat(6, 1fr); overflow-x: auto; }
+  .wider-table { display: grid; grid-template-columns: 110px repeat(6, minmax(70px,1fr)); overflow-x: auto; min-width: 0; width: 100%; }
   .wt-head { font-size: 11px; font-weight: 800; padding: 6px 9px; border-right: 1px solid var(--border); border-bottom: 1px solid var(--border); background: var(--light-grey); color: var(--grey); }
   .wt-head.term-col { text-align: center; font-size: 11px; }
   .wt-head.no-right { border-right: none; }
@@ -244,6 +244,28 @@
   .modal-field textarea { resize: vertical; }
   .modal-hint { font-size: 11px; color: #94a3b8; margin-top: 3px; }
   .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
+
+  /* ── Scheduling widget ── */
+  .sched-row { display: flex; gap: 16px; flex-wrap: wrap; align-items: flex-end; margin-top: 4px; }
+  .sched-group { display: flex; flex-direction: column; gap: 5px; }
+  .sched-label { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; color: var(--grey); }
+  .term-pills { display: flex; gap: 4px; }
+  .term-pill {
+    padding: 7px 10px; border-radius: 7px; border: 2px solid var(--border);
+    background: #fff; font-weight: 800; font-size: 13px; cursor: pointer;
+    color: var(--grey); transition: all .12s; line-height: 1;
+  }
+  .term-pill.active { background: var(--yr-colour); border-color: var(--yr-colour); color: #fff; }
+  .term-pill:hover:not(.active) { border-color: var(--yr-colour); color: var(--yr-colour); }
+  .stepper { display: flex; align-items: center; gap: 0; border: 2px solid var(--border); border-radius: 8px; overflow: hidden; }
+  .stepper-btn {
+    width: 34px; height: 34px; border: none; background: #f8fafc;
+    font-size: 20px; font-weight: 700; cursor: pointer; color: var(--text);
+    display: flex; align-items: center; justify-content: center; transition: background .1s;
+    flex-shrink: 0;
+  }
+  .stepper-btn:hover { background: #e2e8f0; }
+  .stepper-val { min-width: 52px; text-align: center; font-weight: 800; font-size: 14px; padding: 0 4px; border-left: 1px solid var(--border); border-right: 1px solid var(--border); }
   .btn-cancel {
     padding: 8px 18px; border-radius: 8px; font-size: 13px; font-weight: 700;
     background: var(--light-grey); color: var(--grey); border: none; cursor: pointer;
@@ -415,7 +437,7 @@
   <div class="nav-spacer"></div>
   <button class="nav-export-btn" onclick="exportJSON()">Export JSON</button>
   <button class="nav-export-btn" onclick="openImporter()" style="background:#dcfce7;color:#166534;border-color:#bbf7d0">Import Excel</button>
-  <span class="nav-version">24.07.26p</span>
+  <span class="nav-version">24.07.26q</span>
 </nav>
 
 <!-- ── Year chips (second row) ── -->
@@ -3771,12 +3793,85 @@ function saveModal() {
 
 document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeModal(); closeCross(); } });
 
+// ── Scheduling stepper helpers ──
+function _efi(id) { return document.getElementById(id); }
+function _schedTerm() { return parseInt(_efi('ef-term').value) || 1; }
+function _schedWS()   { return parseInt(_efi('ef-wstart').value) || 1; }
+function _schedWE()   { return parseInt(_efi('ef-wend').value) || 1; }
+function _refreshSched() {
+  const ws = _schedWS(), we = _schedWE(), dur = we - ws + 1;
+  _efi('ef-wstart-disp').textContent = ws;
+  _efi('ef-dur-disp').textContent = dur + (dur === 1 ? ' wk' : ' wks');
+}
+function setTermPill(t) {
+  document.querySelectorAll('.term-pill').forEach(b => b.classList.remove('active'));
+  const btn = _efi('tp-' + t);
+  if (btn) btn.classList.add('active');
+  _efi('ef-term').value = t;
+  const maxW = TERM_WK[t - 1];
+  const dur  = _schedWE() - _schedWS() + 1;
+  const ws   = Math.min(_schedWS(), maxW);
+  const we   = Math.min(ws + dur - 1, maxW);
+  _efi('ef-wstart').value = ws;
+  _efi('ef-wend').value   = we;
+  _refreshSched();
+}
+function adjWeek(delta) {
+  const maxW = TERM_WK[_schedTerm() - 1];
+  const dur  = _schedWE() - _schedWS() + 1;
+  const ws   = Math.min(Math.max(_schedWS() + delta, 1), maxW - dur + 1);
+  _efi('ef-wstart').value = ws;
+  _efi('ef-wend').value   = Math.min(ws + dur - 1, maxW);
+  _refreshSched();
+}
+function adjDur(delta) {
+  const maxW = TERM_WK[_schedTerm() - 1];
+  const ws   = _schedWS();
+  const dur  = Math.min(Math.max(_schedWE() - ws + 1 + delta, 1), maxW - ws + 1);
+  _efi('ef-wend').value = ws + dur - 1;
+  _refreshSched();
+}
+
 function openEnqEdit(k, id) {
   const enq = getEnq(k, id);
-  const genres = ['Entertain','Inform','Explain','Persuade','Argue','Recount','Instruct',''];
+  const genres   = ['Entertain','Inform','Explain','Persuade','Argue','Recount','Instruct',''];
   const statuses = ['unknown','new','some','existing'];
+  const term = enq.term || 1;
+  const ws   = enq.weekStart || 1;
+  const we   = enq.weekEnd   || ws;
+  const dur  = we - ws + 1;
 
   const body = `
+    <div class="modal-field" style="background:#f8fafc;border-radius:10px;padding:12px 14px;margin-bottom:16px;border:1px solid var(--border)">
+      <label style="margin-bottom:10px">Scheduling</label>
+      <div class="sched-row">
+        <div class="sched-group">
+          <div class="sched-label">Term</div>
+          <div class="term-pills">
+            ${[1,2,3,4,5,6].map(t=>`<button type="button" class="term-pill${term===t?' active':''}" id="tp-${t}" onclick="setTermPill(${t})">T${t}</button>`).join('')}
+          </div>
+        </div>
+        <div class="sched-group">
+          <div class="sched-label">Starts week</div>
+          <div class="stepper">
+            <button type="button" class="stepper-btn" onclick="adjWeek(-1)">−</button>
+            <span class="stepper-val" id="ef-wstart-disp">${ws}</span>
+            <button type="button" class="stepper-btn" onclick="adjWeek(1)">+</button>
+          </div>
+        </div>
+        <div class="sched-group">
+          <div class="sched-label">Duration</div>
+          <div class="stepper">
+            <button type="button" class="stepper-btn" onclick="adjDur(-1)">−</button>
+            <span class="stepper-val" id="ef-dur-disp">${dur + (dur===1?' wk':' wks')}</span>
+            <button type="button" class="stepper-btn" onclick="adjDur(1)">+</button>
+          </div>
+        </div>
+      </div>
+      <input type="hidden" id="ef-term"   value="${term}">
+      <input type="hidden" id="ef-wstart" value="${ws}">
+      <input type="hidden" id="ef-wend"   value="${we}">
+    </div>
     <div class="modal-field">
       <label>Key Question</label>
       <input id="ef-kq" type="text" value="${esc(enq.keyQuestion||'')}">
@@ -3817,14 +3912,17 @@ function openEnqEdit(k, id) {
 
   openModal(`Editing Enquiry ${id}`, body, () => {
     saveEnqField(k, id, {
-      keyQuestion:   document.getElementById('ef-kq').value,
-      linkedText:    document.getElementById('ef-lt').value,
-      genre:         document.getElementById('ef-genre').value,
-      writingOutcome:document.getElementById('ef-wo').value,
-      planningStatus:document.getElementById('ef-ps').value,
-      overview:      document.getElementById('ef-ov').value,
-      contentSkills: document.getElementById('ef-cs').value,
-      crossCurricular:document.getElementById('ef-cc').value,
+      term:           parseInt(_efi('ef-term').value),
+      weekStart:      parseInt(_efi('ef-wstart').value),
+      weekEnd:        parseInt(_efi('ef-wend').value),
+      keyQuestion:    _efi('ef-kq').value,
+      linkedText:     _efi('ef-lt').value,
+      genre:          _efi('ef-genre').value,
+      writingOutcome: _efi('ef-wo').value,
+      planningStatus: _efi('ef-ps').value,
+      overview:       _efi('ef-ov').value,
+      contentSkills:  _efi('ef-cs').value,
+      crossCurricular:_efi('ef-cc').value,
     });
     renderYear(k);
   });
