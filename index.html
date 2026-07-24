@@ -437,7 +437,7 @@
   <div class="nav-spacer"></div>
   <button class="nav-export-btn" onclick="exportJSON()">Export JSON</button>
   <button class="nav-export-btn" onclick="openImporter()" style="background:#dcfce7;color:#166534;border-color:#bbf7d0">Import Excel</button>
-  <span class="nav-version">24.07.26u</span>
+  <span class="nav-version">24.07.26v</span>
 </nav>
 
 <!-- ── Year chips (second row) ── -->
@@ -4042,16 +4042,26 @@ function openEnqEdit(k, id) {
   });
 }
 
+const READER_META = {
+  'Writing linked texts':  { hint: 'The book the class reads as the model text for the writing unit this term — usually one title.', placeholder: 'e.g. Fantastic Mr Fox — Roald Dahl' },
+  'Enquiry linked texts':  { hint: 'Non-fiction or fiction books that support a subject enquiry this term. One title per line if there are several.', placeholder: 'e.g. How to Be an Explorer — Lonely Planet Kids (Geography)' },
+  'Story time texts':      { hint: 'The class reader read aloud each day — the book the whole class shares together across the term.', placeholder: 'e.g. The Last Bear — Hannah Gold' },
+};
+
 function openWiderEdit(k, wkey, rowLabel, termIdx) {
   const val = getWiderCell(k, wkey, rowLabel, termIdx);
   const w = WIDER_DEF.find(x => x.key === wkey);
   const termName = TERM_NM[termIdx];
 
+  const readerMeta = wkey === 'reader' ? READER_META[rowLabel] : null;
+  const hint = readerMeta ? readerMeta.hint : 'Plain text. Each line becomes a separate bullet when displayed.';
+  const placeholder = readerMeta ? readerMeta.placeholder : '';
+
   const body = `
     <div class="modal-field">
       <label>${w ? w.name : wkey} — ${rowLabel} — ${termName}</label>
-      <textarea id="wf-val" rows="6">${esc(val)}</textarea>
-      <div class="modal-hint">Plain text. Each line becomes a separate bullet when displayed.</div>
+      <textarea id="wf-val" rows="4" placeholder="${esc(placeholder)}">${esc(val)}</textarea>
+      <div class="modal-hint">${hint}</div>
     </div>`;
 
   openModal(`Edit: ${rowLabel} · ${termName}`, body, () => {
