@@ -437,7 +437,7 @@
   <div class="nav-spacer"></div>
   <button class="nav-export-btn" onclick="exportJSON()">Export JSON</button>
   <button class="nav-export-btn" onclick="openImporter()" style="background:#dcfce7;color:#166534;border-color:#bbf7d0">Import Excel</button>
-  <span class="nav-version">24.07.26w</span>
+  <span class="nav-version">24.07.26x</span>
 </nav>
 
 <!-- ── Year chips (second row) ── -->
@@ -3840,7 +3840,7 @@ function renderGlanceGrid(k, enqs, yc, yd, yl, activeStates) {
       const last = t === 5 ? ' no-right' : '';
       if (w.key === 'reader') {
         const lines = w.rows.map(row => {
-          const v = getWiderCell(k, w.key, row.label, t);
+          const v = fmtReaderVal(getWiderCell(k, w.key, row.label, t));
           return v ? `<span style="display:block;font-size:10px;line-height:1.3">${esc(v)}</span>` : '';
         }).filter(Boolean).join('');
         h += `<div class="grid-cell cell-wider${last}" onclick="openWiderEdit('${k}','reader','Writing linked texts',${t})">
@@ -3880,13 +3880,14 @@ function renderWiderSection(k, w, yc, yd) {
     const isLast = ri === w.rows.length - 1;
     h += `<div class="wt-row-label${isLast?' no-bottom':''}">${row.label}</div>`;
     for (let t = 0; t < 6; t++) {
-      const val = getWiderCell(k, w.key, row.label, t);
+      const rawVal = getWiderCell(k, w.key, row.label, t);
+      const displayVal = w.key === 'reader' ? fmtReaderVal(rawVal) : rawVal;
       const nr = t===5 ? ' no-right' : '';
       const nb = isLast ? ' no-bottom' : '';
       h += `<div class="wt-cell${nr}${nb}" onclick="openWiderEdit('${k}','${w.key}','${esc(row.label)}',${t})">
         <button class="wt-edit-btn" onclick="event.stopPropagation();openWiderEdit('${k}','${w.key}','${esc(row.label)}',${t})">✏️</button>
-        ${val
-          ? `<div class="wt-content">${esc(val)}</div>`
+        ${displayVal
+          ? `<div class="wt-content">${esc(displayVal)}</div>`
           : `<span class="wt-placeholder">Click to add…</span>`}
       </div>`;
     }
@@ -4054,32 +4055,58 @@ function openEnqEdit(k, id) {
 }
 
 const READER_META = {
-  'Writing linked texts':  { hint: 'The book the class reads as the model text for the writing unit this term — usually one title.', placeholder: 'e.g. Fantastic Mr Fox — Roald Dahl' },
-  'Enquiry linked texts':  { hint: 'Non-fiction or fiction books that support a subject enquiry this term. One title per line if there are several.', placeholder: 'e.g. How to Be an Explorer — Lonely Planet Kids (Geography)' },
-  'Story time texts':      { hint: 'The class reader read aloud each day — the book the whole class shares together across the term.', placeholder: 'e.g. The Last Bear — Hannah Gold' },
+  'Writing linked texts':  { hint: 'The book the class reads as the model text for the writing unit this term.', titlePh: 'e.g. Fantastic Mr Fox', authorPh: 'e.g. Roald Dahl' },
+  'Enquiry linked texts':  { hint: 'A book supporting a subject enquiry this term. Include the subject in the title if helpful.', titlePh: 'e.g. How to Be an Explorer (Geography)', authorPh: 'e.g. Lonely Planet Kids' },
+  'Story time texts':      { hint: 'The class reader read aloud each day across the term.', titlePh: 'e.g. The Last Bear', authorPh: 'e.g. Hannah Gold' },
 };
+
+function fmtReaderVal(val) {
+  if (!val) return '';
+  const nl = val.indexOf('\n');
+  if (nl === -1) return val;
+  const title = val.slice(0, nl).trim();
+  const author = val.slice(nl + 1).trim();
+  return author ? `${title} — ${author}` : title;
+}
 
 function openWiderEdit(k, wkey, rowLabel, termIdx) {
   const w = WIDER_DEF.find(x => x.key === wkey);
   const termName = TERM_NM[termIdx];
 
   if (wkey === 'reader') {
+    const inputStyle = 'width:100%;padding:8px 10px;border:1px solid #e5e7eb;border-radius:8px;font-size:13px;box-sizing:border-box';
     const body = w.rows.map(row => {
       const meta = READER_META[row.label] || {};
-      const val = getWiderCell(k, wkey, row.label, termIdx);
-      const fieldId = 'wf_reader_' + row.label.replace(/\W+/g,'_');
+      const stored = getWiderCell(k, wkey, row.label, termIdx);
+      const nl = stored.indexOf('\n');
+      const titleVal = nl === -1 ? stored : stored.slice(0, nl);
+      const authorVal = nl === -1 ? '' : stored.slice(nl + 1);
+      const tId = 'wf_rt_' + row.label.replace(/\W+/g,'_');
+      const aId = 'wf_ra_' + row.label.replace(/\W+/g,'_');
       return `
-        <div class="modal-field">
-          <label>${row.label}</label>
-          <textarea id="${fieldId}" rows="2" placeholder="${esc(meta.placeholder||'')}">${esc(val)}</textarea>
-          <div class="modal-hint">${meta.hint||''}</div>
+        <div class="modal-field" style="margin-bottom:14px">
+          <label style="margin-bottom:6px">${row.label}</label>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+            <div>
+              <div style="font-size:11px;color:#9ca3af;margin-bottom:3px;font-weight:600">TITLE</div>
+              <input id="${tId}" type="text" value="${esc(titleVal)}" placeholder="${esc(meta.titlePh||'')}" style="${inputStyle}">
+            </div>
+            <div>
+              <div style="font-size:11px;color:#9ca3af;margin-bottom:3px;font-weight:600">AUTHOR</div>
+              <input id="${aId}" type="text" value="${esc(authorVal)}" placeholder="${esc(meta.authorPh||'')}" style="${inputStyle}">
+            </div>
+          </div>
+          <div class="modal-hint" style="margin-top:5px">${meta.hint||''}</div>
         </div>`;
     }).join('');
 
     openModal(`Reader · ${termName}`, body, () => {
       w.rows.forEach(row => {
-        const fieldId = 'wf_reader_' + row.label.replace(/\W+/g,'_');
-        saveWiderCell(k, wkey, row.label, termIdx, document.getElementById(fieldId).value);
+        const tId = 'wf_rt_' + row.label.replace(/\W+/g,'_');
+        const aId = 'wf_ra_' + row.label.replace(/\W+/g,'_');
+        const title = document.getElementById(tId).value.trim();
+        const author = document.getElementById(aId).value.trim();
+        saveWiderCell(k, wkey, row.label, termIdx, author ? `${title}\n${author}` : title);
       });
       renderYear(k);
     });
