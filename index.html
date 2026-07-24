@@ -89,6 +89,14 @@
     text-decoration: none; color: var(--grey); border: 1px solid var(--border); transition: all .15s;
   }
   .nav-link:hover { color: var(--text); background: var(--light-grey); }
+  .nav-sub-link {
+    font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 4px;
+    text-decoration: none; color: var(--grey); background: var(--light-grey);
+    border: 1px solid var(--border); display: inline-flex; align-items: center; gap: 3px;
+    margin-left: -3px;
+  }
+  .nav-sub-link:hover { background: #e5e7eb; color: var(--text); }
+  .grid-sub-subject { padding-left: 22px; font-size: 10px; }
 
   /* ── Overview card ── */
   .overview-card { background: #fff; border-radius: 12px; border: 1px solid var(--border); overflow: hidden; margin-bottom: 32px; }
@@ -405,7 +413,7 @@
   <div class="nav-spacer"></div>
   <button class="nav-export-btn" onclick="exportJSON()">Export JSON</button>
   <button class="nav-export-btn" onclick="openImporter()" style="background:#dcfce7;color:#166534;border-color:#bbf7d0">Import Excel</button>
-  <span class="nav-version">24.07.26e</span>
+  <span class="nav-version">24.07.26f</span>
 </nav>
 
 <!-- ── Year chips (second row) ── -->
@@ -416,7 +424,7 @@
 
 <footer>
   <span>WFA Curriculum Planner &mdash; 2025&ndash;26 &mdash; Wallscourt Farm Academy</span>
-  <strong>24.07.26e</strong>
+  <strong>24.07.26f</strong>
 </footer>
 
 <!-- ── Edit modal ── -->
@@ -3400,17 +3408,17 @@ const SOB_META = {
 };
 
 const WIDER_DEF = [
-  { key:'maths',     icon:'➕',  name:'Mathematics',        state:'I am a Mathematician',     colour:'#7c3aed', rows:[{label:'Weekly sequence'}] },
-  { key:'art',       icon:'🎨',  name:'Art & Design',        state:'I am an Artist',           colour:'#b45309', rows:[{label:'Unit'},{label:'Key vocabulary'}] },
-  { key:'dt',        icon:'🔧',  name:'Design Technology',   state:'I am a Designer',          colour:'#0891b2', rows:[{label:'Unit'}] },
-  { key:'music',     icon:'🎵',  name:'Music',               state:'I am a Musician',          colour:'#db2777', rows:[{label:'Unit'},{label:'Key skills'}] },
-  { key:'pe',        icon:'🏃',  name:'PE',                  state:'I am an Athlete',          colour:'#065f46', rows:[{label:'Strand'},{label:'Activity'}] },
-  { key:'re',        icon:'✡️', name:'RE',                  state:'I am an Explorer',         colour:'#6366f1', rows:[{label:'Religion'},{label:'Key question'},{label:'Content'}] },
-  { key:'pshe',      icon:'💛',  name:'PSHE',                state:'I am a Citizen',           colour:'#4d7c0f', rows:[{label:'Theme'},{label:'Content focus'}] },
-  { key:'computing', icon:'💻',  name:'Computing',           state:'I am a Computer Scientist',colour:'#374151', rows:[{label:'Unit and content'}] },
-  { key:'mfl',       icon:'🌐',  name:'MFL',                 state:'I am a Linguist',          colour:'#be185d', rows:[{label:'Context'}] },
-  { key:'oracy',     icon:'🗣️', name:'Oracy',               state:'',                         colour:'#0369a1', rows:[{label:'Strand'},{label:'Outcome'}] },
-  { key:'spelling',  icon:'🔤',  name:'Spelling',            state:'',                         colour:'#92400e', rows:[{label:'Weekly pattern'}] },
+  { key:'maths',     icon:'➕',  name:'Mathematician',       colour:'#7c3aed', rows:[{label:'Weekly sequence'}] },
+  { key:'art',       icon:'🎨',  name:'Artist',              colour:'#b45309', rows:[{label:'Unit'},{label:'Key vocabulary'}] },
+  { key:'dt',        icon:'🔧',  name:'Designer',            colour:'#0891b2', rows:[{label:'Unit'}] },
+  { key:'music',     icon:'🎵',  name:'Musician',            colour:'#db2777', rows:[{label:'Unit'},{label:'Key skills'}] },
+  { key:'pe',        icon:'🏃',  name:'Athlete',             colour:'#065f46', rows:[{label:'Strand'},{label:'Activity'}] },
+  { key:'re',        icon:'✡️', name:'RE',      group:'Citizen',          colour:'#6366f1', rows:[{label:'Religion'},{label:'Key question'},{label:'Content'}] },
+  { key:'pshe',      icon:'💛',  name:'PSHE',    group:'Citizen',          colour:'#4d7c0f', rows:[{label:'Theme'},{label:'Content focus'}] },
+  { key:'computing', icon:'💻',  name:'Computer Scientist',  group:'Computer Scientist', colour:'#374151', rows:[{label:'Unit and content'}] },
+  { key:'mfl',       icon:'🌐',  name:'Linguist',            colour:'#be185d', rows:[{label:'Context'}] },
+  { key:'oracy',     icon:'🗣️', name:'Oracy',               colour:'#0369a1', rows:[{label:'Strand'},{label:'Outcome'}] },
+  { key:'spelling',  icon:'🔤',  name:'Spelling', group:'Writer',          colour:'#92400e', rows:[{label:'Weekly pattern'}] },
 ];
 
 const SDOT = { new:'#dc2626', some:'#d97706', existing:'#16a34a', unknown:'#cbd5e1' };
@@ -3524,8 +3532,11 @@ function renderYear(k) {
   activeStates.forEach(s => {
     const m = SOB_META[s];
     h += `<a class="nav-link" href="#s-${s.toLowerCase().replace(/ /g,'-')}" style="border-color:${sobBg(s)};color:${sobBg(s)}">${sobImg(s,16)} ${s}</a>`;
+    WIDER_DEF.filter(w => w.group === s).forEach(w => {
+      h += `<a class="nav-sub-link" href="#s-wider-${w.key}">${w.icon} ${w.name}</a>`;
+    });
   });
-  WIDER_DEF.forEach(w => {
+  WIDER_DEF.filter(w => !w.group).forEach(w => {
     h += `<a class="nav-link" href="#s-wider-${w.key}">${w.icon} ${w.name}</a>`;
   });
   h += `</div>`;
@@ -3636,10 +3647,23 @@ function renderGlanceGrid(k, enqs, yc, yd, yl, activeStates) {
         h += `</div>`;
       }
     }
+    // Sub-wider rows grouped under this SOB
+    WIDER_DEF.filter(w => w.group === state).forEach(w => {
+      h += `<div class="grid-cell grid-subject grid-sub-subject" style="color:${w.colour}">${w.icon} ${w.name}</div>`;
+      for (let t = 0; t < 6; t++) {
+        const firstRow = w.rows[0];
+        const val = getWiderCell(k, w.key, firstRow.label, t);
+        const last = t === 5 ? ' no-right' : '';
+        h += `<div class="grid-cell cell-wider${last}" onclick="openWiderEdit('${k}','${w.key}','${firstRow.label}',${t})">
+          <button class="cell-edit-btn" onclick="event.stopPropagation();openWiderEdit('${k}','${w.key}','${firstRow.label}',${t})">✏️</button>
+          ${val ? `<div class="cell-text">${esc(val)}</div>` : `<div class="edit-hint">Add content…</div>`}
+        </div>`;
+      }
+    });
   });
 
-  // Wider curriculum rows (editable)
-  WIDER_DEF.forEach(w => {
+  // Wider curriculum rows (editable) — ungrouped only
+  WIDER_DEF.filter(w => !w.group).forEach(w => {
     h += `<div class="grid-cell grid-subject" style="color:${w.colour}">${w.icon} ${w.name}</div>`;
     for (let t = 0; t < 6; t++) {
       // Show first row's content for this term
