@@ -395,9 +395,7 @@
 <!-- ── Nav ── -->
 <nav>
   <a class="nav-logo" href="#">
-    <div class="nav-logo-icon">
-      <svg viewBox="0 0 24 24"><path d="M12 3L1 9l4 2.18v6L12 21l7-3.82v-6L23 9 12 3zm6 8.18l-6 3.28-6-3.28V9.27l6-3.28 6 3.28v1.91z"/></svg>
-    </div>
+    <img src="https://cdn.jsdelivr.net/gh/wallscourtfarm/wfa-shared@main/web/wfa_logo.webp" alt="WFA" style="width:44px;height:44px;border-radius:8px;flex-shrink:0">
     <div>
       <div class="nav-title">WFA Curriculum Planner</div>
       <div class="nav-sub">Wallscourt Farm Academy</div>
@@ -407,7 +405,7 @@
   <div class="nav-spacer"></div>
   <button class="nav-export-btn" onclick="exportJSON()">Export JSON</button>
   <button class="nav-export-btn" onclick="openImporter()" style="background:#dcfce7;color:#166534;border-color:#bbf7d0">Import Excel</button>
-  <span class="nav-version">24.07.26c</span>
+  <span class="nav-version">24.07.26d</span>
 </nav>
 
 <!-- ── Year chips (second row) ── -->
@@ -418,7 +416,7 @@
 
 <footer>
   <span>WFA Curriculum Planner &mdash; 2025&ndash;26 &mdash; Wallscourt Farm Academy</span>
-  <strong>24.07.26c</strong>
+  <strong>24.07.26d</strong>
 </footer>
 
 <!-- ── Edit modal ── -->
@@ -3355,7 +3353,7 @@ const YEAR_DATA = {"Y1":{"yearGroup":"Y1","learningZone":"Beech Learning Zone","
 // CONSTANTS
 // ════════════════════════════════════════════════════════════
 const TERM_WK  = [8, 7, 6, 6, 5, 7];
-const TERM_NM  = ['Autumn 1','Autumn 2','Spring 1','Spring 2','Summer 1','Summer 2'];
+const TERM_NM  = ['T1','T2','T3','T4','T5','T6'];
 const TERM_GS  = [0, 8, 15, 21, 27, 32];
 const YR_KEYS  = ['Y1','Y2','Y3','Y4','Y5','Y6'];
 
@@ -3367,18 +3365,41 @@ const SOB_BG = {
 };
 const SOB_ORDER = ['Writer','Scientist','Geographer','Historian','Citizen','Computer Scientist','Artist','Designer','Musician','Linguist','Athlete'];
 
+const SOB_ICON = {
+  Writer:             'icons/writer.png',
+  Scientist:          'icons/scientist.png',
+  Geographer:         'icons/geographer.png',
+  Historian:          'icons/historian.png',
+  Citizen:            'icons/citizen.png',
+  'Computer Scientist':'icons/computer_scientist.png',
+  Artist:             'icons/artist.png',
+  Designer:           'icons/designer.png',
+  Musician:           'icons/musician.png',
+  Linguist:           'icons/linguist.png',
+  Athlete:            'icons/athlete.png',
+};
+function sobImg(state, size=20) {
+  const src = SOB_ICON[state];
+  const bg = sobBg(state);
+  const r = Math.round(size * 0.2);
+  const p = Math.round(size * 0.1);
+  return src
+    ? `<img src="${src}" style="width:${size}px;height:${size}px;filter:invert(1);background:${bg};border-radius:${r}px;padding:${p}px;vertical-align:middle;flex-shrink:0" alt="">`
+    : '';
+}
+
 const SOB_META = {
-  Writer:              { icon:'✍️',  heading:'Writing Enquiries',       state:'Writer' },
-  Scientist:           { icon:'🔬',  heading:'Science Enquiries',        state:'Scientist' },
-  Geographer:          { icon:'🌍',  heading:'Geography Enquiries',      state:'Geographer' },
-  Historian:           { icon:'🏛️', heading:'History Enquiries',        state:'Historian' },
-  Citizen:             { icon:'💛',  heading:'Citizenship Enquiries',    state:'Citizen' },
-  'Computer Scientist':{ icon:'💻',  heading:'Computing Enquiries',      state:'Computer Scientist' },
-  Artist:              { icon:'🎨',  heading:'Art Enquiries',            state:'Artist' },
-  Designer:            { icon:'🔧',  heading:'DT Enquiries',             state:'Designer' },
-  Musician:            { icon:'🎵',  heading:'Music Enquiries',          state:'Musician' },
-  Linguist:            { icon:'🌐',  heading:'MFL Enquiries',            state:'Linguist' },
-  Athlete:             { icon:'🏃',  heading:'PE Enquiries',             state:'Athlete' },
+  Writer:              { heading:'Writing Enquiries',       state:'Writer' },
+  Scientist:           { heading:'Science Enquiries',        state:'Scientist' },
+  Geographer:          { heading:'Geography Enquiries',      state:'Geographer' },
+  Historian:           { heading:'History Enquiries',        state:'Historian' },
+  Citizen:             { heading:'Citizenship Enquiries',    state:'Citizen' },
+  'Computer Scientist':{ heading:'Computing Enquiries',      state:'Computer Scientist' },
+  Artist:              { heading:'Art Enquiries',            state:'Artist' },
+  Designer:            { heading:'DT Enquiries',             state:'Designer' },
+  Musician:            { heading:'Music Enquiries',          state:'Musician' },
+  Linguist:            { heading:'MFL Enquiries',            state:'Linguist' },
+  Athlete:             { heading:'PE Enquiries',             state:'Athlete' },
 };
 
 const WIDER_DEF = [
@@ -3505,7 +3526,7 @@ function renderYear(k) {
   h += `<div class="nav-bar"><span class="jlabel">Jump to</span>`;
   activeStates.forEach(s => {
     const m = SOB_META[s];
-    h += `<a class="nav-link" href="#s-${s.toLowerCase().replace(/ /g,'-')}" style="border-color:${sobBg(s)};color:${sobBg(s)}">${m.icon} ${s}</a>`;
+    h += `<a class="nav-link" href="#s-${s.toLowerCase().replace(/ /g,'-')}" style="border-color:${sobBg(s)};color:${sobBg(s)}">${sobImg(s,16)} ${s}</a>`;
   });
   WIDER_DEF.forEach(w => {
     h += `<a class="nav-link" href="#s-wider-${w.key}">${w.icon} ${w.name}</a>`;
@@ -3522,7 +3543,7 @@ function renderYear(k) {
     const sEnqs = enqs.filter(e => e.stateOfBeing === state).sort((a,b)=>a.term-b.term||a.order-b.order);
 
     h += `<div id="s-${state.toLowerCase().replace(/ /g,'-')}" class="subject-header" style="border-color:${bg};color:${bg}">
-      <span style="font-size:20px">${m.icon}</span>
+      ${sobImg(state, 28)}
       <h2>${m.heading} — I am a ${m.state}</h2>
     </div>`;
 
@@ -3598,7 +3619,7 @@ function renderGlanceGrid(k, enqs, yc, yd, yl, activeStates) {
   activeStates.forEach(state => {
     const bg = sobBg(state);
     const m = SOB_META[state];
-    h += `<div class="grid-cell grid-subject">${m.icon} ${state}</div>`;
+    h += `<div class="grid-cell grid-subject">${sobImg(state,16)} ${state}</div>`;
     for (let t = 0; t < 6; t++) {
       const term = t + 1;
       const termEnqs = enqs.filter(e => e.stateOfBeing === state && e.term === term);
