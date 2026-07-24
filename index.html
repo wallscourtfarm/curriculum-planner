@@ -281,6 +281,107 @@
   footer { padding: 14px 20px; border-top: 1px solid var(--border); margin-top: 20px; display: flex; align-items: center; justify-content: space-between; font-size: 12px; color: #94a3b8; }
   footer strong { color: #64748b; }
 
+  /* ── Excel Importer overlay ── */
+  #import-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,.55); z-index: 500;
+    display: none; align-items: flex-start; justify-content: center; padding: 24px 16px;
+    overflow-y: auto;
+  }
+  #import-overlay.open { display: flex; }
+  .import-card {
+    background: #fff; border-radius: 16px; width: 100%; max-width: 820px;
+    box-shadow: 0 20px 60px rgba(0,0,0,.2); overflow: hidden; flex-shrink: 0;
+  }
+  .import-header {
+    background: #1798d3; color: #fff; padding: 16px 22px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .import-header h2 { font-size: 16px; font-weight: 900; }
+  .import-close-btn {
+    background: rgba(255,255,255,.2); border: none; color: #fff;
+    border-radius: 8px; padding: 4px 10px; font-size: 13px; font-weight: 700; cursor: pointer;
+  }
+  .import-close-btn:hover { background: rgba(255,255,255,.35); }
+  .import-body { padding: 22px; }
+  .imp-step { display: none; }
+  .imp-step.active { display: block; }
+  .imp-section-label {
+    font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .06em;
+    color: #64748b; margin-bottom: 8px;
+  }
+  .imp-row { margin-bottom: 18px; }
+  .imp-row label { display: block; font-size: 13px; font-weight: 700; margin-bottom: 6px; color: #1e293b; }
+  .imp-row select, .imp-row input[type="text"] {
+    width: 100%; padding: 8px 10px; border: 1.5px solid #cbd5e1; border-radius: 8px;
+    font-size: 13px; font-family: 'Nunito',sans-serif; color: #1e293b; background: #fff;
+  }
+  #imp-dropzone {
+    border: 2px dashed #94a3b8; border-radius: 10px; padding: 32px 20px;
+    text-align: center; color: #64748b; font-size: 13px; font-weight: 600;
+    cursor: pointer; transition: all .15s; margin-bottom: 6px;
+  }
+  #imp-dropzone:hover, #imp-dropzone.drag-over { border-color: #1798d3; background: #e0f2fe; color: #1798d3; }
+  #imp-dropzone .imp-drop-icon { font-size: 28px; margin-bottom: 8px; }
+  .imp-step-actions {
+    display: flex; gap: 10px; justify-content: flex-end; margin-top: 22px;
+    padding-top: 16px; border-top: 1px solid var(--border);
+  }
+  .imp-btn {
+    padding: 9px 20px; border-radius: 8px; font-size: 13px; font-weight: 700;
+    cursor: pointer; border: none; transition: all .15s;
+  }
+  .imp-btn-primary { background: #1798d3; color: #fff; }
+  .imp-btn-primary:hover { background: #0f6fa3; }
+  .imp-btn-secondary { background: #f1f5f9; color: #475569; }
+  .imp-btn-secondary:hover { background: #e2e8f0; }
+  .imp-btn:disabled { opacity: .45; cursor: not-allowed; }
+  .imp-map-grid {
+    display: grid; grid-template-columns: 1fr 24px 1fr; gap: 8px 6px; align-items: center;
+    font-size: 13px; margin-bottom: 4px;
+  }
+  .imp-map-grid .imp-field-name { font-weight: 700; color: #1e293b; }
+  .imp-map-grid .imp-arrow { color: #94a3b8; text-align: center; }
+  .imp-map-grid select { padding: 6px 8px; font-size: 12px; border: 1.5px solid #cbd5e1; border-radius: 6px; font-family:'Nunito',sans-serif; }
+  .imp-status { font-size: 12px; color: #64748b; margin-top: 10px; font-style: italic; }
+  .diff-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .diff-table th {
+    background: #f1f5f9; padding: 7px 10px; text-align: left;
+    font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .04em;
+    color: #64748b; border-bottom: 2px solid var(--border);
+  }
+  .diff-table td { padding: 7px 10px; border-bottom: 1px solid #f1f5f9; vertical-align: top; }
+  .diff-table tr.diff-changed td { background: #fffbeb; }
+  .diff-table tr.diff-new td { background: #f0fdf4; }
+  .diff-table tr.diff-ambiguous td { background: #fff1f2; }
+  .diff-table tr.diff-unchanged td { opacity: .5; }
+  .diff-old { color: #dc2626; text-decoration: line-through; font-size: 11px; }
+  .diff-new { color: #16a34a; font-size: 11px; }
+  .diff-badge {
+    display: inline-block; font-size: 10px; font-weight: 700; padding: 1px 6px;
+    border-radius: 4px; white-space: nowrap;
+  }
+  .badge-changed { background: #fef3c7; color: #92400e; }
+  .badge-new { background: #dcfce7; color: #166534; }
+  .badge-unchanged { background: #f1f5f9; color: #64748b; }
+  .badge-ambiguous { background: #ffe4e6; color: #9f1239; }
+  .badge-skipped { background: #f1f5f9; color: #94a3b8; }
+  .diff-summary {
+    background: #f8fafc; border: 1px solid var(--border); border-radius: 8px;
+    padding: 12px 16px; margin-bottom: 16px; font-size: 13px; display: flex; gap: 20px; flex-wrap: wrap;
+  }
+  .diff-summary span { font-weight: 700; }
+  .diff-scroll { max-height: 380px; overflow-y: auto; border: 1px solid var(--border); border-radius: 8px; }
+  .imp-warn { background: #fff7ed; border: 1px solid #fed7aa; border-radius: 8px; padding: 10px 14px; font-size: 12px; color: #92400e; margin-bottom: 14px; }
+  .imp-info { background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 10px 14px; font-size: 12px; color: #1e40af; margin-bottom: 14px; }
+  .imp-steps-bar { display: flex; gap: 0; margin-bottom: 20px; border-radius: 8px; overflow: hidden; border: 1px solid var(--border); }
+  .imp-steps-bar .step {
+    flex: 1; padding: 8px 12px; font-size: 12px; font-weight: 700; text-align: center;
+    background: #f8fafc; color: #94a3b8; border-right: 1px solid var(--border);
+  }
+  .imp-steps-bar .step:last-child { border-right: none; }
+  .imp-steps-bar .step.active { background: #1798d3; color: #fff; }
+  .imp-steps-bar .step.done { background: #dcfce7; color: #166534; }
+
   @media print {
     nav, #year-bar, footer { display: none; }
     .card-edit-btn, .wt-edit-btn, .cell-edit-btn { display: none; }
@@ -305,7 +406,8 @@
   <div id="year-bar-inline" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;"></div>
   <div class="nav-spacer"></div>
   <button class="nav-export-btn" onclick="exportJSON()">Export JSON</button>
-  <span class="nav-version">24.07.26b</span>
+  <button class="nav-export-btn" onclick="openImporter()" style="background:#dcfce7;color:#166534;border-color:#bbf7d0">Import Excel</button>
+  <span class="nav-version">24.07.26c</span>
 </nav>
 
 <!-- ── Year chips (second row) ── -->
@@ -316,7 +418,7 @@
 
 <footer>
   <span>WFA Curriculum Planner &mdash; 2025&ndash;26 &mdash; Wallscourt Farm Academy</span>
-  <strong>23.07.26a</strong>
+  <strong>24.07.26c</strong>
 </footer>
 
 <!-- ── Edit modal ── -->
@@ -341,6 +443,85 @@
   </div>
   <div class="cross-body">
     <div class="cross-grid" id="cross-grid"></div>
+  </div>
+</div>
+
+<!-- ── Excel Import overlay ── -->
+<div id="import-overlay">
+  <div class="import-card">
+    <div class="import-header">
+      <h2>Import from Excel</h2>
+      <button class="import-close-btn" onclick="closeImporter()">&#x2715; Close</button>
+    </div>
+    <div class="import-body">
+      <div class="imp-steps-bar">
+        <div class="step active" id="imp-step-ind-1">1 · Select file</div>
+        <div class="step" id="imp-step-ind-2">2 · Map columns</div>
+        <div class="step" id="imp-step-ind-3">3 · Review &amp; import</div>
+      </div>
+
+      <!-- Step 1: file + year group -->
+      <div class="imp-step active" id="imp-step1">
+        <div class="imp-row">
+          <label>Year group to import into</label>
+          <select id="imp-year-select">
+            <option value="Y1">Y1 · Beech</option>
+            <option value="Y2">Y2 · Willow</option>
+            <option value="Y3">Y3 · Acer</option>
+            <option value="Y4" selected>Y4 · Maple</option>
+            <option value="Y5">Y5 · Hazel</option>
+            <option value="Y6">Y6 · Elm</option>
+          </select>
+        </div>
+        <div class="imp-row">
+          <label>Excel file (.xlsx or .xls)</label>
+          <div id="imp-dropzone" onclick="document.getElementById('imp-file-input').click()"
+               ondragover="event.preventDefault();this.classList.add('drag-over')"
+               ondragleave="this.classList.remove('drag-over')"
+               ondrop="event.preventDefault();this.classList.remove('drag-over');handleImpDrop(event)">
+            <div class="imp-drop-icon">📂</div>
+            <div id="imp-drop-label">Drag &amp; drop an Excel file here, or click to browse</div>
+          </div>
+          <input type="file" id="imp-file-input" accept=".xlsx,.xls" style="display:none" onchange="handleImpFile(this.files[0])">
+        </div>
+        <div id="imp-step1-status" class="imp-status"></div>
+        <div class="imp-step-actions">
+          <button class="imp-btn imp-btn-primary" id="imp-btn-to2" onclick="impGoStep2()" disabled>Next: Map columns →</button>
+        </div>
+      </div>
+
+      <!-- Step 2: column mapping -->
+      <div class="imp-step" id="imp-step2">
+        <div class="imp-info">Auto-detected column assignments are shown below. Adjust any that are wrong, then click Next.</div>
+        <div class="imp-section-label">Map Excel columns to planner fields</div>
+        <div id="imp-map-container"></div>
+        <div id="imp-step2-status" class="imp-status"></div>
+        <div class="imp-step-actions">
+          <button class="imp-btn imp-btn-secondary" onclick="impGoStep(1)">← Back</button>
+          <button class="imp-btn imp-btn-primary" id="imp-btn-to3" onclick="impGoStep3()">Next: Review changes →</button>
+        </div>
+      </div>
+
+      <!-- Step 3: diff + confirm -->
+      <div class="imp-step" id="imp-step3">
+        <div id="imp-diff-summary" class="diff-summary"></div>
+        <div id="imp-warn-container"></div>
+        <div class="diff-scroll">
+          <table class="diff-table" id="imp-diff-table">
+            <thead><tr>
+              <th>Status</th><th>ID</th><th>SOB</th><th>Tm</th>
+              <th>Field</th><th>Current value</th><th>New value</th>
+              <th style="text-align:center">Include</th>
+            </tr></thead>
+            <tbody id="imp-diff-body"></tbody>
+          </table>
+        </div>
+        <div class="imp-step-actions">
+          <button class="imp-btn imp-btn-secondary" onclick="impGoStep(2)">← Back</button>
+          <button class="imp-btn imp-btn-primary" id="imp-btn-apply" onclick="applyImport()">Apply import</button>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -3002,7 +3183,173 @@ const YEAR_DATA = {"Y1":{"yearGroup":"Y1","learningZone":"Beech Learning Zone","
             "contentSkills": "",
             "crossCurricular": ""
       }
-]}};
+],"wider": {
+        "maths": {
+                "Weekly sequence": [
+                        "Place Value (to 10,000,000); Calculation — multi-step addition and subtraction; long multiplication; short and long division; order of operations",
+                        "Fractions, Decimals and Percentages — equivalence; adding, subtracting, multiplying and dividing fractions; percentages of amounts; FDP conversions",
+                        "Ratio and Proportion; Algebra — using formulae; generating and describing linear sequences; solving equations with one unknown",
+                        "Measurement — converting between units; calculating area, perimeter and volume; Geometry — Shape: classifying and calculating angles (including in triangles and around a point); circles",
+                        "Geometry — Position and Direction: translation, reflection, coordinates in 4 quadrants; Statistics — mean, median, mode; line graphs, pie charts; SATs preparation [inferred]",
+                        "Post-SATs breadth and enrichment; problem-solving and mathematical reasoning across all strands; financial maths and real-world application [inferred]"
+                ]
+        },
+        "art": {
+                "Unit": [
+                        "Drawing and Art Brut — Jean Dubuffet; outsider art; unconventional materials and mark-making; art as personal expression",
+                        "Pattern and optical illusion — MC Escher; tessellation; impossible shapes; mathematical art",
+                        "Sculpture — Antony Gormley; wire sculpture; human form in 3D; armature and construction techniques",
+                        "Impressionism and Pop Art — Monet (colour and light in water); Roy Lichtenstein (Ben-day dots; comic-book art); colour and technique comparison",
+                        "Identity and protest — Frida Kahlo (self-portraiture; symbolism); Banksy (street art; social commentary); art with a message",
+                        "Mixed media and Batik — Kurt Schwitters (assemblage and collage); Batik technique using flour-paste resist; links to DT Textiles"
+                ],
+                "Key vocabulary": [
+                        "mark-making, Art Brut, outsider art, Dubuffet, unconventional, expression",
+                        "tessellation, pattern, optical illusion, Escher, impossible, geometry",
+                        "sculpture, wire, armature, human form, 3D, Gormley",
+                        "Impressionism, Pop Art, Ben-day dots, colour, light, technique",
+                        "identity, protest, symbolism, self-portrait, street art, message",
+                        "assemblage, collage, Batik, resist, mixed media, texture"
+                ]
+        },
+        "dt": {
+                "Unit": [
+                        "Electrical Systems — Crumble microcontrollers; writing and debugging programs to control a circuit; making sensors from card and foil; Discover → Define → Develop → Deliver → Evolve",
+                        "No DT unit this term [inferred]",
+                        "No DT unit this term [inferred]",
+                        "Textiles — cross stitch, chain stitch and blanket stitch; attaching fabric; designing a recycled/pre-loved fabric product (e.g. bag or tool belt); Batik technique (flour-water paste); Discover → Define → Develop → Deliver → Evolve",
+                        "No DT unit this term [inferred]",
+                        "No DT unit this term [inferred]"
+                ]
+        },
+        "music": {
+                "Charanga unit": [
+                        "Happy [inferred] — pop ensemble; dynamics; Samba-inspired body percussion and rhythm",
+                        "Classroom Jazz 2 [inferred] — jazz; syncopation; improvisation; swing feel",
+                        "A New Year Carol [inferred] — classical and choral; canon; madrigal-style singing; full staff notation",
+                        "You've Got a Friend [inferred] — soul; harmonies; chord progressions; ternary form (ABA)",
+                        "Music and Me [inferred] — multi-genre; personal music journey; independent composition",
+                        "Reflect, Rewind and Replay [inferred] — musical history Renaissance to present; full notation; performance and evaluation"
+                ],
+                "Key skills": [
+                        "Ensemble performance; Samba rhythms; syncopation; dynamic range; body percussion and pitched instruments together",
+                        "Jazz improvisation; syncopated rhythms; swing feel; lead and accompaniment roles; classroom jazz ensemble",
+                        "Canon and round; madrigal style; choral singing in multiple parts; reading full staff notation with confidence",
+                        "Ternary form (ABA); vocal harmonies; chord accompaniment; soul genre study; expressive performance",
+                        "Independent composition across a chosen genre; appraising own and peers' work; music technology basics",
+                        "Musical history from Renaissance to present; all musical elements consolidated; performance to an audience; written evaluation"
+                ]
+        },
+        "pe": {
+                "Real PE strand": [
+                        "Personal",
+                        "Social",
+                        "Cognitive",
+                        "Creative",
+                        "Physical",
+                        "Health and Fitness"
+                ],
+                "Activity": [
+                        "Invasion games (football); applying sport-specific skills; Personal — seeing challenges as opportunities; recognising strengths and weaknesses [inferred]",
+                        "Net and wall games (badminton and tennis); Social — sensitive feedback; negotiating and collaborating with partners [inferred]",
+                        "Striking and fielding (cricket and rounders); Cognitive — recognising patterns of play; developing methods to outwit opponents [inferred]",
+                        "Dance and gymnastics — Creative strand; responding imaginatively; adapting and adjusting movements to contrast with others [inferred]",
+                        "Athletics — sprint, distance, jump and throw events; Physical — performing skills fluently and accurately in competitive contexts [inferred]",
+                        "Outdoor Adventurous Activity and personal fitness; Health and Fitness — self-selecting warm-up/cool-down; long-term benefits of physical activity; increasing leadership roles [inferred]"
+                ]
+        },
+        "re": {
+                "Religion": [
+                        "Islam",
+                        "Christianity",
+                        "Islam",
+                        "Christianity",
+                        "Humanism",
+                        "Christianity"
+                ],
+                "Key question": [
+                        "What is the best way for a Muslim to show commitment to God?",
+                        "How do Christian celebrations help Christians understand who Jesus was and why he was born?",
+                        "Does belief in Akhirah (life after death) help Muslims lead a good life?",
+                        "Is anything ever eternal? (Agape and salvation)",
+                        "How do inspirational people impact on how Humanists live today?",
+                        "Is Christianity still a strong religion over 2000 years after Jesus was on Earth?"
+                ],
+                "Content": [
+                        "The Five Pillars: Shahadah (declaration of faith), Salat (prayer five times daily), Zakat (charitable giving 2.5%), Sawm (fasting during Ramadan), Hajj (pilgrimage to Makkah); key vocab: Allah, Qur'an, Makkah, mosque",
+                        "The Incarnation; Messiah; Jesus as God made man; how Christmas is celebrated by Christians and non-Christians; what is central to Christian belief at Christmas; key vocab: Incarnation, Messiah, Agape",
+                        "Akhirah (life after death); Day of Judgement (Allah as fair and just); recording angels; good deeds, fasting and prayer as preparation; Jihad as personal struggle; key vocab: Akhirah, Day of Judgement, Jihad, Hadith",
+                        "Agape (eternal, unconditional love); God's love for humanity as eternal; salvation and forgiveness; heaven (topos in Greek); whether God's forgiveness is eternal; key vocab: Agape, Messiah, salvation, eternal, heaven, topos",
+                        "Humanist beliefs — no evidence of God; one life; personal responsibility; empathy; Charles Darwin (evolution; eternal legacy), Einstein (relativity), Alice Roberts (modern advocate); key vocab: legacy, rational, secular, empathy",
+                        "Lent, Shrove Tuesday, Ash Wednesday; Advent; Christian charities as expressions of Agape; the ichthys symbol; countries where Christians face persecution; whether Christianity remains relevant 2000 years on; key vocab: Lent, Advent, ichthys, persecution, Agape"
+                ]
+        },
+        "pshe": {
+                "Jigsaw theme": [
+                        "Being Me in My World",
+                        "Celebrating Difference",
+                        "Dreams and Goals",
+                        "Healthy Me",
+                        "Relationships",
+                        "Changing Me"
+                ],
+                "Content focus": [
+                        "Identity in the wider world; democracy; human rights; global citizenship; taking responsibility [inferred]",
+                        "Racism; discrimination; hate crime; appreciating diversity; challenging prejudice; celebrating difference [inferred]",
+                        "Future aspirations; career awareness; global poverty; setting goals that help others [inferred]",
+                        "First aid and CPR; mental health awareness; substance misuse (alcohol, drugs); making healthy choices for life [inferred]",
+                        "Online relationships; consent; assertiveness; healthy vs unhealthy relationships; recognising risk [inferred]",
+                        "Puberty recap; relationships and sex education appropriate to Y6; transition to secondary school; managing change [inferred]"
+                ]
+        },
+        "computing": {
+                "Unit and content": [
+                        "Computing Systems and Networks — Internet Communication: how data travels (IP addresses, DNS, packets, protocols); cybersecurity basics",
+                        "Data and Information — Spreadsheets: formulae and functions; creating charts; analysing a data set; presenting findings",
+                        "Creating Media — Web Page Creation: HTML basics; designing and building a simple web page; evaluating web design",
+                        "Creating Media — 3D Modelling: computer-aided design (CAD) tools; designing a 3D object; evaluating and iterating on a design",
+                        "Programming — Variables in Games (Scratch): using variables to track scores, lives and conditions; complex game mechanics; debugging",
+                        "Programming — Sensing and Control: physical computing (e.g. micro:bit or Scratch sensing); detecting movement or input; links to Y6 DT Crumble microcontrollers"
+                ]
+        },
+        "mfl": {
+                "Context": [
+                        "Unit 1 — Socialisation/Describing people: sur la photo il y a... / en la foto hay...; describing family members (hair colour, eye colour)",
+                        "Unit 1 continued — character adjectives with masculine and feminine agreement (sympa/sympa, gentil/gentille, sportif/sportive); extended description of people",
+                        "Unit 2 — Classroom language: pencil case vocabulary (un crayon, une gomme, une règle... / un lápiz, una goma, una regla...); classroom instructions (écoutez, écrivez...)",
+                        "Unit 2 continued — forming negatives (je n'ai pas de... / no tengo...); il y a/il n'y a pas de; j'ai/je n'ai pas de; un/une and plural forms",
+                        "Unit 3 — The World Around Me / Animals: il y a un chien / hay un perro; domestic, farm and wild animals; zoo vocabulary",
+                        "Unit 3 continued — animals vocabulary extended; cultural awareness: famous French or Spanish musicians and artists; consolidation of Y6 language"
+                ]
+        },
+        "oracy": {
+                "Strand": [
+                        "Physical [inferred]",
+                        "Social and Emotional [inferred]",
+                        "Cognitive [inferred]",
+                        "Linguistic [inferred]",
+                        "Physical [inferred]",
+                        "Social and Emotional [inferred]"
+                ],
+                "Outcome": [
+                        "Formal presentation delivery to a wider audience; confident projection, pacing and use of pause for effect [inferred]",
+                        "Leadership in group discussion; negotiation; constructive collaboration; giving and receiving feedback [inferred]",
+                        "Constructing and developing an argument; formal debate; rebuttal; evaluating evidence [inferred]",
+                        "Rhetorical devices (rule of three, repetition, rhetorical questions); persuasive techniques; adapting register [inferred]",
+                        "Interview skills; explaining reasoning clearly under time pressure; SATs-style verbal responses [inferred]",
+                        "Group presentations; transition talk — reflecting on primary school learning journey; celebrating achievements [inferred]"
+                ]
+        },
+        "spelling": {
+                "Weekly pattern": [
+                        "No Nonsense Spelling Y6 — statutory Y5/6 word list begins; suffixes -ible/-able and -ibly/-ably (visible/invisible, adorable); distinguishing patterns [inferred]",
+                        "Word endings: -cial/-tial, -ance/-ence, -ant/-ent; Y5/6 statutory word list continued (accommodate, committee, conscience...) [inferred]",
+                        "Prefixes and word families; etymology; Greek and Latin roots (auto-, bio-, tele-, -graph, -ology); word origins [inferred]",
+                        "Homophones and commonly confused words (aisle/isle, altar/alter, cereal/serial...); Y5/6 statutory word list continued [inferred]",
+                        "SATs vocabulary preparation; spelling strategies (mnemonics, morphology, etymology); Y5/6 full word list [inferred]",
+                        "Post-SATs: etymology and word origins; enrichment spelling; creative and investigative word study [inferred]"
+                ]
+        }}}};
 
 // ════════════════════════════════════════════════════════════
 // CONSTANTS
@@ -3527,175 +3874,297 @@ function exportJSON() {
   a.download = `wfa-curriculum-${k}-${new Date().toISOString().slice(0,10)}.json`;
   a.click();
   URL.revokeObjectURL(url);
-,
-      "wider": {
-        "maths": {
-                "Weekly sequence": [
-                        "Place Value (to 10,000,000); Calculation — multi-step addition and subtraction; long multiplication; short and long division; order of operations",
-                        "Fractions, Decimals and Percentages — equivalence; adding, subtracting, multiplying and dividing fractions; percentages of amounts; FDP conversions",
-                        "Ratio and Proportion; Algebra — using formulae; generating and describing linear sequences; solving equations with one unknown",
-                        "Measurement — converting between units; calculating area, perimeter and volume; Geometry — Shape: classifying and calculating angles (including in triangles and around a point); circles",
-                        "Geometry — Position and Direction: translation, reflection, coordinates in 4 quadrants; Statistics — mean, median, mode; line graphs, pie charts; SATs preparation [inferred]",
-                        "Post-SATs breadth and enrichment; problem-solving and mathematical reasoning across all strands; financial maths and real-world application [inferred]"
-                ]
-        },
-        "art": {
-                "Unit": [
-                        "Drawing and Art Brut — Jean Dubuffet; outsider art; unconventional materials and mark-making; art as personal expression",
-                        "Pattern and optical illusion — MC Escher; tessellation; impossible shapes; mathematical art",
-                        "Sculpture — Antony Gormley; wire sculpture; human form in 3D; armature and construction techniques",
-                        "Impressionism and Pop Art — Monet (colour and light in water); Roy Lichtenstein (Ben-day dots; comic-book art); colour and technique comparison",
-                        "Identity and protest — Frida Kahlo (self-portraiture; symbolism); Banksy (street art; social commentary); art with a message",
-                        "Mixed media and Batik — Kurt Schwitters (assemblage and collage); Batik technique using flour-paste resist; links to DT Textiles"
-                ],
-                "Key vocabulary": [
-                        "mark-making, Art Brut, outsider art, Dubuffet, unconventional, expression",
-                        "tessellation, pattern, optical illusion, Escher, impossible, geometry",
-                        "sculpture, wire, armature, human form, 3D, Gormley",
-                        "Impressionism, Pop Art, Ben-day dots, colour, light, technique",
-                        "identity, protest, symbolism, self-portrait, street art, message",
-                        "assemblage, collage, Batik, resist, mixed media, texture"
-                ]
-        },
-        "dt": {
-                "Unit": [
-                        "Electrical Systems — Crumble microcontrollers; writing and debugging programs to control a circuit; making sensors from card and foil; Discover → Define → Develop → Deliver → Evolve",
-                        "No DT unit this term [inferred]",
-                        "No DT unit this term [inferred]",
-                        "Textiles — cross stitch, chain stitch and blanket stitch; attaching fabric; designing a recycled/pre-loved fabric product (e.g. bag or tool belt); Batik technique (flour-water paste); Discover → Define → Develop → Deliver → Evolve",
-                        "No DT unit this term [inferred]",
-                        "No DT unit this term [inferred]"
-                ]
-        },
-        "music": {
-                "Charanga unit": [
-                        "Happy [inferred] — pop ensemble; dynamics; Samba-inspired body percussion and rhythm",
-                        "Classroom Jazz 2 [inferred] — jazz; syncopation; improvisation; swing feel",
-                        "A New Year Carol [inferred] — classical and choral; canon; madrigal-style singing; full staff notation",
-                        "You've Got a Friend [inferred] — soul; harmonies; chord progressions; ternary form (ABA)",
-                        "Music and Me [inferred] — multi-genre; personal music journey; independent composition",
-                        "Reflect, Rewind and Replay [inferred] — musical history Renaissance to present; full notation; performance and evaluation"
-                ],
-                "Key skills": [
-                        "Ensemble performance; Samba rhythms; syncopation; dynamic range; body percussion and pitched instruments together",
-                        "Jazz improvisation; syncopated rhythms; swing feel; lead and accompaniment roles; classroom jazz ensemble",
-                        "Canon and round; madrigal style; choral singing in multiple parts; reading full staff notation with confidence",
-                        "Ternary form (ABA); vocal harmonies; chord accompaniment; soul genre study; expressive performance",
-                        "Independent composition across a chosen genre; appraising own and peers' work; music technology basics",
-                        "Musical history from Renaissance to present; all musical elements consolidated; performance to an audience; written evaluation"
-                ]
-        },
-        "pe": {
-                "Real PE strand": [
-                        "Personal",
-                        "Social",
-                        "Cognitive",
-                        "Creative",
-                        "Physical",
-                        "Health and Fitness"
-                ],
-                "Activity": [
-                        "Invasion games (football); applying sport-specific skills; Personal — seeing challenges as opportunities; recognising strengths and weaknesses [inferred]",
-                        "Net and wall games (badminton and tennis); Social — sensitive feedback; negotiating and collaborating with partners [inferred]",
-                        "Striking and fielding (cricket and rounders); Cognitive — recognising patterns of play; developing methods to outwit opponents [inferred]",
-                        "Dance and gymnastics — Creative strand; responding imaginatively; adapting and adjusting movements to contrast with others [inferred]",
-                        "Athletics — sprint, distance, jump and throw events; Physical — performing skills fluently and accurately in competitive contexts [inferred]",
-                        "Outdoor Adventurous Activity and personal fitness; Health and Fitness — self-selecting warm-up/cool-down; long-term benefits of physical activity; increasing leadership roles [inferred]"
-                ]
-        },
-        "re": {
-                "Religion": [
-                        "Islam",
-                        "Christianity",
-                        "Islam",
-                        "Christianity",
-                        "Humanism",
-                        "Christianity"
-                ],
-                "Key question": [
-                        "What is the best way for a Muslim to show commitment to God?",
-                        "How do Christian celebrations help Christians understand who Jesus was and why he was born?",
-                        "Does belief in Akhirah (life after death) help Muslims lead a good life?",
-                        "Is anything ever eternal? (Agape and salvation)",
-                        "How do inspirational people impact on how Humanists live today?",
-                        "Is Christianity still a strong religion over 2000 years after Jesus was on Earth?"
-                ],
-                "Content": [
-                        "The Five Pillars: Shahadah (declaration of faith), Salat (prayer five times daily), Zakat (charitable giving 2.5%), Sawm (fasting during Ramadan), Hajj (pilgrimage to Makkah); key vocab: Allah, Qur'an, Makkah, mosque",
-                        "The Incarnation; Messiah; Jesus as God made man; how Christmas is celebrated by Christians and non-Christians; what is central to Christian belief at Christmas; key vocab: Incarnation, Messiah, Agape",
-                        "Akhirah (life after death); Day of Judgement (Allah as fair and just); recording angels; good deeds, fasting and prayer as preparation; Jihad as personal struggle; key vocab: Akhirah, Day of Judgement, Jihad, Hadith",
-                        "Agape (eternal, unconditional love); God's love for humanity as eternal; salvation and forgiveness; heaven (topos in Greek); whether God's forgiveness is eternal; key vocab: Agape, Messiah, salvation, eternal, heaven, topos",
-                        "Humanist beliefs — no evidence of God; one life; personal responsibility; empathy; Charles Darwin (evolution; eternal legacy), Einstein (relativity), Alice Roberts (modern advocate); key vocab: legacy, rational, secular, empathy",
-                        "Lent, Shrove Tuesday, Ash Wednesday; Advent; Christian charities as expressions of Agape; the ichthys symbol; countries where Christians face persecution; whether Christianity remains relevant 2000 years on; key vocab: Lent, Advent, ichthys, persecution, Agape"
-                ]
-        },
-        "pshe": {
-                "Jigsaw theme": [
-                        "Being Me in My World",
-                        "Celebrating Difference",
-                        "Dreams and Goals",
-                        "Healthy Me",
-                        "Relationships",
-                        "Changing Me"
-                ],
-                "Content focus": [
-                        "Identity in the wider world; democracy; human rights; global citizenship; taking responsibility [inferred]",
-                        "Racism; discrimination; hate crime; appreciating diversity; challenging prejudice; celebrating difference [inferred]",
-                        "Future aspirations; career awareness; global poverty; setting goals that help others [inferred]",
-                        "First aid and CPR; mental health awareness; substance misuse (alcohol, drugs); making healthy choices for life [inferred]",
-                        "Online relationships; consent; assertiveness; healthy vs unhealthy relationships; recognising risk [inferred]",
-                        "Puberty recap; relationships and sex education appropriate to Y6; transition to secondary school; managing change [inferred]"
-                ]
-        },
-        "computing": {
-                "Unit and content": [
-                        "Computing Systems and Networks — Internet Communication: how data travels (IP addresses, DNS, packets, protocols); cybersecurity basics",
-                        "Data and Information — Spreadsheets: formulae and functions; creating charts; analysing a data set; presenting findings",
-                        "Creating Media — Web Page Creation: HTML basics; designing and building a simple web page; evaluating web design",
-                        "Creating Media — 3D Modelling: computer-aided design (CAD) tools; designing a 3D object; evaluating and iterating on a design",
-                        "Programming — Variables in Games (Scratch): using variables to track scores, lives and conditions; complex game mechanics; debugging",
-                        "Programming — Sensing and Control: physical computing (e.g. micro:bit or Scratch sensing); detecting movement or input; links to Y6 DT Crumble microcontrollers"
-                ]
-        },
-        "mfl": {
-                "Context": [
-                        "Unit 1 — Socialisation/Describing people: sur la photo il y a... / en la foto hay...; describing family members (hair colour, eye colour)",
-                        "Unit 1 continued — character adjectives with masculine and feminine agreement (sympa/sympa, gentil/gentille, sportif/sportive); extended description of people",
-                        "Unit 2 — Classroom language: pencil case vocabulary (un crayon, une gomme, une règle... / un lápiz, una goma, una regla...); classroom instructions (écoutez, écrivez...)",
-                        "Unit 2 continued — forming negatives (je n'ai pas de... / no tengo...); il y a/il n'y a pas de; j'ai/je n'ai pas de; un/une and plural forms",
-                        "Unit 3 — The World Around Me / Animals: il y a un chien / hay un perro; domestic, farm and wild animals; zoo vocabulary",
-                        "Unit 3 continued — animals vocabulary extended; cultural awareness: famous French or Spanish musicians and artists; consolidation of Y6 language"
-                ]
-        },
-        "oracy": {
-                "Strand": [
-                        "Physical [inferred]",
-                        "Social and Emotional [inferred]",
-                        "Cognitive [inferred]",
-                        "Linguistic [inferred]",
-                        "Physical [inferred]",
-                        "Social and Emotional [inferred]"
-                ],
-                "Outcome": [
-                        "Formal presentation delivery to a wider audience; confident projection, pacing and use of pause for effect [inferred]",
-                        "Leadership in group discussion; negotiation; constructive collaboration; giving and receiving feedback [inferred]",
-                        "Constructing and developing an argument; formal debate; rebuttal; evaluating evidence [inferred]",
-                        "Rhetorical devices (rule of three, repetition, rhetorical questions); persuasive techniques; adapting register [inferred]",
-                        "Interview skills; explaining reasoning clearly under time pressure; SATs-style verbal responses [inferred]",
-                        "Group presentations; transition talk — reflecting on primary school learning journey; celebrating achievements [inferred]"
-                ]
-        },
-        "spelling": {
-                "Weekly pattern": [
-                        "No Nonsense Spelling Y6 — statutory Y5/6 word list begins; suffixes -ible/-able and -ibly/-ably (visible/invisible, adorable); distinguishing patterns [inferred]",
-                        "Word endings: -cial/-tial, -ance/-ence, -ant/-ent; Y5/6 statutory word list continued (accommodate, committee, conscience...) [inferred]",
-                        "Prefixes and word families; etymology; Greek and Latin roots (auto-, bio-, tele-, -graph, -ology); word origins [inferred]",
-                        "Homophones and commonly confused words (aisle/isle, altar/alter, cereal/serial...); Y5/6 statutory word list continued [inferred]",
-                        "SATs vocabulary preparation; spelling strategies (mnemonics, morphology, etymology); Y5/6 full word list [inferred]",
-                        "Post-SATs: etymology and word origins; enrichment spelling; creative and investigative word study [inferred]"
-                ]
+}
+
+// ════════════════════════════════════════════════════════════
+// EXCEL IMPORTER
+// ════════════════════════════════════════════════════════════
+const IMP_FIELDS = [
+  { key:'keyQuestion',   label:'Key Question',   required:true  },
+  { key:'weekStart',     label:'Week Start',      required:false },
+  { key:'weekEnd',       label:'Week End',        required:false },
+  { key:'overview',      label:'Overview',        required:false },
+  { key:'linkedText',    label:'Linked Text/Book',required:false },
+  { key:'genre',         label:'Genre',           required:false },
+  { key:'writingOutcome',label:'Writing Outcome', required:false },
+  { key:'contentSkills', label:'Content / Skills',required:false },
+];
+const IMP_MATCH_FIELDS = ['term','stateOfBeing'];
+const MAP_STORAGE_KEY = 'wfa_cp_import_mapping';
+
+let impState = { year:'Y4', headers:[], rows:[], mapping:{}, diff:[] };
+
+function openImporter() {
+  impState = { year: curYear, headers:[], rows:[], mapping:{}, diff:[] };
+  document.getElementById('imp-year-select').value = curYear;
+  document.getElementById('imp-drop-label').textContent = 'Drag & drop an Excel file here, or click to browse';
+  document.getElementById('imp-step1-status').textContent = '';
+  document.getElementById('imp-btn-to2').disabled = true;
+  impGoStep(1);
+  document.getElementById('import-overlay').classList.add('open');
+  loadXLSX();
+}
+function closeImporter() {
+  document.getElementById('import-overlay').classList.remove('open');
+}
+
+function loadXLSX() {
+  if (window.XLSX) return;
+  const s = document.createElement('script');
+  s.src = 'https://unpkg.com/xlsx/dist/xlsx.full.min.js';
+  s.onerror = () => {
+    document.getElementById('imp-step1-status').textContent = 'Could not load Excel library — check your internet connection.';
+  };
+  document.head.appendChild(s);
+}
+
+function impGoStep(n) {
+  [1,2,3].forEach(i => {
+    document.getElementById('imp-step'+i).classList.toggle('active', i===n);
+    const ind = document.getElementById('imp-step-ind-'+i);
+    ind.classList.remove('active','done');
+    if (i < n) ind.classList.add('done');
+    else if (i === n) ind.classList.add('active');
+  });
+}
+
+function handleImpDrop(e) {
+  const f = e.dataTransfer.files[0];
+  if (f) handleImpFile(f);
+}
+
+function handleImpFile(file) {
+  if (!file) return;
+  if (!window.XLSX) {
+    document.getElementById('imp-step1-status').textContent = 'Excel library still loading — please try again in a moment.';
+    return;
+  }
+  document.getElementById('imp-drop-label').textContent = '📄 ' + file.name;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const wb = XLSX.read(new Uint8Array(e.target.result), {type:'array'});
+      const ws = wb.Sheets[wb.SheetNames[0]];
+      const rows = XLSX.utils.sheet_to_json(ws, {header:1, defval:''});
+      if (!rows.length) { document.getElementById('imp-step1-status').textContent = 'File appears empty.'; return; }
+      impState.headers = rows[0].map(h => String(h).trim());
+      impState.rows = rows.slice(1).filter(r => r.some(c => String(c).trim()));
+      impState.year = document.getElementById('imp-year-select').value;
+      document.getElementById('imp-step1-status').textContent =
+        `Loaded ${impState.rows.length} data rows, ${impState.headers.length} columns.`;
+      document.getElementById('imp-btn-to2').disabled = false;
+    } catch(err) {
+      document.getElementById('imp-step1-status').textContent = 'Error reading file: ' + err.message;
+    }
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+function autoDetect(headers) {
+  const saved = (() => { try { return JSON.parse(localStorage.getItem(MAP_STORAGE_KEY)||'{}'); } catch { return {}; } })();
+  const norm = s => String(s).toLowerCase().replace(/[^a-z0-9]/g,'');
+  const map = {};
+  const tryMatch = (patterns) => {
+    for (const pat of patterns) {
+      const idx = headers.findIndex(h => norm(h).includes(pat));
+      if (idx >= 0) return idx;
+    }
+    return -1;
+  };
+  map.term        = saved.term        ?? tryMatch(['term']);
+  map.stateOfBeing= saved.stateOfBeing?? tryMatch(['stateofbeing','sob','state']);
+  map.keyQuestion = saved.keyQuestion ?? tryMatch(['keyquestion','key question','question','enquiry']);
+  map.weekStart   = saved.weekStart   ?? tryMatch(['weekstart','week start','wkstart','startweek']);
+  map.weekEnd     = saved.weekEnd     ?? tryMatch(['weekend','week end','wkend','endweek']);
+  map.overview    = saved.overview    ?? tryMatch(['overview','description','summary']);
+  map.linkedText  = saved.linkedText  ?? tryMatch(['linkedtext','linked','book','text','reading']);
+  map.genre       = saved.genre       ?? tryMatch(['genre']);
+  map.writingOutcome = saved.writingOutcome ?? tryMatch(['writingoutcome','writing outcome','outcome']);
+  map.contentSkills  = saved.contentSkills  ?? tryMatch(['contentskills','content','skills','skill']);
+  return map;
+}
+
+function impGoStep2() {
+  impState.year = document.getElementById('imp-year-select').value;
+  if (!impState.rows.length) return;
+  const map = autoDetect(impState.headers);
+  impState.mapping = map;
+  const headers = impState.headers;
+  const opts = ['<option value="-1">— not in file —</option>',
+    ...headers.map((h,i) => `<option value="${i}">${esc(h)}</option>`)].join('');
+
+  const matchFields = [
+    { key:'term',         label:'Term (1–6)',           required:true  },
+    { key:'stateOfBeing', label:'State of Being / SOB', required:true  },
+    ...IMP_FIELDS
+  ];
+
+  let html = '<div class="imp-map-grid">';
+  html += '<div style="font-weight:800;font-size:11px;color:#64748b;text-transform:uppercase">Planner field</div>';
+  html += '<div></div>';
+  html += '<div style="font-weight:800;font-size:11px;color:#64748b;text-transform:uppercase">Excel column</div>';
+  matchFields.forEach(f => {
+    const sel = map[f.key] >= 0 ? map[f.key] : -1;
+    const reqStar = f.required ? '<span style="color:#dc2626"> *</span>' : '';
+    html += `<div class="imp-field-name">${esc(f.label)}${reqStar}</div>`;
+    html += `<div class="imp-arrow">→</div>`;
+    html += `<select id="imp-map-${f.key}" onchange="impState.mapping['${f.key}']=parseInt(this.value)">`;
+    html += opts.replace(`value="${sel}"`, `value="${sel}" selected`);
+    html += `</select>`;
+  });
+  html += '</div>';
+  document.getElementById('imp-map-container').innerHTML = html;
+  document.getElementById('imp-step2-status').textContent = '';
+  impGoStep(2);
+}
+
+function impGoStep3() {
+  const m = impState.mapping;
+  if (m.term < 0 || m.stateOfBeing < 0) {
+    document.getElementById('imp-step2-status').textContent = 'Term and State of Being columns are required for matching.';
+    return;
+  }
+  // Save mapping to localStorage for next time
+  localStorage.setItem(MAP_STORAGE_KEY, JSON.stringify(m));
+  buildDiff();
+  renderDiff();
+  impGoStep(3);
+}
+
+function buildDiff() {
+  const k = impState.year;
+  const baseEnqs = YEAR_DATA[k]?.enquiries || [];
+  const m = impState.mapping;
+  const diff = [];
+
+  impState.rows.forEach((row, ri) => {
+    const termVal = parseInt(row[m.term]);
+    const sobVal  = String(row[m.stateOfBeing]||'').trim();
+    if (!termVal || !sobVal) return;
+
+    const matches = baseEnqs.filter(e => e.term === termVal && e.stateOfBeing === sobVal);
+    if (matches.length === 0) {
+      const newEnq = { _rowIdx: ri, type:'new', term:termVal, stateOfBeing:sobVal };
+      IMP_FIELDS.forEach(f => {
+        if (m[f.key] >= 0) newEnq[f.key] = String(row[m[f.key]]||'').trim();
+      });
+      diff.push(newEnq);
+    } else if (matches.length >= 2) {
+      diff.push({ _rowIdx:ri, type:'ambiguous', term:termVal, stateOfBeing:sobVal,
+        note:`${matches.length} enquiries match term ${termVal} + "${sobVal}" — cannot auto-assign` });
+    } else {
+      const base = matches[0];
+      const enq = getEnq(k, base.id);
+      const changes = {};
+      IMP_FIELDS.forEach(f => {
+        if (m[f.key] < 0) return;
+        const newVal = String(row[m[f.key]]||'').trim();
+        const oldVal = String(enq[f.key]||'').trim();
+        if (newVal && newVal !== oldVal) changes[f.key] = { from: oldVal, to: newVal };
+      });
+      if (Object.keys(changes).length) {
+        diff.push({ _rowIdx:ri, type:'changed', id:base.id, term:termVal, stateOfBeing:sobVal, changes, _include:true });
+      } else {
+        diff.push({ _rowIdx:ri, type:'unchanged', id:base.id, term:termVal, stateOfBeing:sobVal });
+      }
+    }
+  });
+  impState.diff = diff;
+}
+
+function renderDiff() {
+  const diff = impState.diff;
+  const counts = { changed:0, new:0, unchanged:0, ambiguous:0 };
+  diff.forEach(d => counts[d.type] = (counts[d.type]||0) + 1);
+
+  document.getElementById('imp-diff-summary').innerHTML =
+    `<div>Rows processed: <span>${diff.length}</span></div>` +
+    `<div style="color:#92400e">Changed: <span>${counts.changed||0}</span></div>` +
+    `<div style="color:#166534">New: <span>${counts.new||0}</span></div>` +
+    `<div style="color:#64748b">Unchanged: <span>${counts.unchanged||0}</span></div>` +
+    (counts.ambiguous ? `<div style="color:#9f1239">Ambiguous: <span>${counts.ambiguous}</span></div>` : '');
+
+  const warns = diff.filter(d => d.type==='ambiguous');
+  document.getElementById('imp-warn-container').innerHTML = warns.map(d =>
+    `<div class="imp-warn">⚠️ Row ${d._rowIdx+2}: ${esc(d.note)}</div>`
+  ).join('');
+
+  const tbody = document.getElementById('imp-diff-body');
+  let html = '';
+  diff.forEach((d, di) => {
+    if (d.type === 'unchanged') {
+      html += `<tr class="diff-unchanged"><td><span class="diff-badge badge-unchanged">unchanged</span></td>` +
+        `<td>${esc(d.id||'—')}</td><td>${esc(d.stateOfBeing)}</td><td>${d.term}</td>` +
+        `<td colspan="3" style="color:#94a3b8;font-style:italic">No changes</td><td></td></tr>`;
+    } else if (d.type === 'ambiguous') {
+      html += `<tr class="diff-ambiguous"><td><span class="diff-badge badge-ambiguous">ambiguous</span></td>` +
+        `<td>—</td><td>${esc(d.stateOfBeing)}</td><td>${d.term}</td>` +
+        `<td colspan="3">${esc(d.note)}</td><td></td></tr>`;
+    } else if (d.type === 'new') {
+      const preview = d.keyQuestion || Object.values(d).find(v=>typeof v==='string'&&v) || '';
+      html += `<tr class="diff-new"><td><span class="diff-badge badge-new">new</span></td>` +
+        `<td>—</td><td>${esc(d.stateOfBeing)}</td><td>${d.term}</td>` +
+        `<td>Key question</td><td class="diff-old">—</td>` +
+        `<td class="diff-new">${esc(preview.slice(0,80))}</td>` +
+        `<td style="text-align:center"><input type="checkbox" checked data-diff="${di}" class="imp-chk"></td></tr>`;
+    } else {
+      const fieldNames = Object.keys(d.changes);
+      fieldNames.forEach((f, fi) => {
+        const ch = d.changes[f];
+        const fLabel = IMP_FIELDS.find(x=>x.key===f)?.label || f;
+        if (fi === 0) {
+          html += `<tr class="diff-changed"><td rowspan="${fieldNames.length}"><span class="diff-badge badge-changed">changed</span></td>` +
+            `<td rowspan="${fieldNames.length}">${esc(d.id)}</td>` +
+            `<td rowspan="${fieldNames.length}">${esc(d.stateOfBeing)}</td>` +
+            `<td rowspan="${fieldNames.length}">${d.term}</td>`;
+        } else {
+          html += `<tr class="diff-changed">`;
         }
-}}
+        html += `<td>${esc(fLabel)}</td>` +
+          `<td class="diff-old">${esc(String(ch.from||'—').slice(0,80))}</td>` +
+          `<td class="diff-new">${esc(String(ch.to||'').slice(0,80))}</td>`;
+        if (fi === 0) {
+          html += `<td rowspan="${fieldNames.length}" style="text-align:center">` +
+            `<input type="checkbox" checked data-diff="${di}" class="imp-chk"></td>`;
+        }
+        html += `</tr>`;
+      });
+    }
+  });
+  tbody.innerHTML = html;
+
+  document.getElementById('imp-btn-apply').disabled = !(counts.changed || counts.new);
+}
+
+function applyImport() {
+  const k = impState.year;
+  const checked = new Set(
+    [...document.querySelectorAll('.imp-chk:checked')].map(el => parseInt(el.dataset.diff))
+  );
+  let applied = 0;
+  impState.diff.forEach((d, di) => {
+    if (!checked.has(di)) return;
+    if (d.type === 'changed') {
+      const fields = {};
+      Object.entries(d.changes).forEach(([f, {to}]) => { fields[f] = to; });
+      saveEnqField(k, d.id, fields);
+      applied++;
+    } else if (d.type === 'new') {
+      // Add new enquiry to localStorage as an override
+      const ld = loadData(k);
+      ld.newEnquiries = ld.newEnquiries || [];
+      const newId = `${d.term}.${Date.now()}`;
+      ld.newEnquiries.push({ id:newId, term:d.term, stateOfBeing:d.stateOfBeing,
+        ...Object.fromEntries(IMP_FIELDS.filter(f=>d[f.key]!==undefined).map(f=>[f.key,d[f.key]])),
+        planningStatus:'new' });
+      saveData(k, ld);
+      applied++;
+    }
+  });
+  closeImporter();
+  if (curYear !== k) selectYear(k); else renderYear(k);
+  setTimeout(() => alert(`Import complete: ${applied} enquir${applied===1?'y':'ies'} updated.`), 100);
+}
 
 // ════════════════════════════════════════════════════════════
 // INIT
