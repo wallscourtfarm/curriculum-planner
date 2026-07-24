@@ -101,7 +101,7 @@
   /* ── Overview card ── */
   .overview-card { background: #fff; border-radius: 12px; border: 1px solid var(--border); overflow: hidden; margin-bottom: 32px; }
   .overview-card > h2 { font-size: 14px; font-weight: 800; padding: 12px 18px; border-bottom: 1px solid var(--border); }
-  .overview-grid { display: grid; grid-template-columns: 120px repeat(6, 1fr); overflow-x: auto; }
+  .overview-grid { display: grid; grid-template-columns: max-content repeat(6, minmax(80px, 1fr)); overflow-x: auto; }
   .grid-cell { padding: 8px 9px; border-right: 1px solid var(--border); border-bottom: 1px solid var(--border); font-size: 12px; min-width: 100px; }
   .grid-cell.no-right { border-right: none; }
   .grid-header { font-weight: 800; font-size: 12px; text-align: center; }
@@ -437,7 +437,7 @@
   <div class="nav-spacer"></div>
   <button class="nav-export-btn" onclick="exportJSON()">Export JSON</button>
   <button class="nav-export-btn" onclick="openImporter()" style="background:#dcfce7;color:#166534;border-color:#bbf7d0">Import Excel</button>
-  <span class="nav-version">24.07.26t</span>
+  <span class="nav-version">24.07.26u</span>
 </nav>
 
 <!-- ── Year chips (second row) ── -->
@@ -938,12 +938,12 @@ const YEAR_DATA = {"Y1":{"yearGroup":"Y1","learningZone":"Beech Learning Zone","
         },
         "music": {
                 "Unit": [
-                        "Oak: Start with singing — finding my singing voice",
-                        "Oak: Singing together — how singing makes me feel",
-                        "Oak: Compose and Create — exploring and performing rhythm patterns",
-                        "Oak: Music and movement — feeling the pulse and changing the tempo",
-                        "Oak: Compose and create — high and low melodic responses",
-                        "Oak: Singing for performance — changing tempo and dynamics in our songs"
+                        "Oak National Academy: Start with singing — finding my singing voice",
+                        "Oak National Academy: Singing together — how singing makes me feel",
+                        "Oak National Academy: Compose and Create — exploring and performing rhythm patterns",
+                        "Oak National Academy: Music and movement — feeling the pulse and changing the tempo",
+                        "Oak National Academy: Compose and create — high and low melodic responses",
+                        "Oak National Academy: Singing for performance — changing tempo and dynamics in our songs"
                 ],
                 "Key skills": [
                         "Finding singing voice; pitch matching; vocal warm-ups; unison singing",
@@ -1459,12 +1459,12 @@ const YEAR_DATA = {"Y1":{"yearGroup":"Y1","learningZone":"Beech Learning Zone","
         },
         "music": {
                 "Unit": [
-                        "Oak: Start with singing — learning through singing games",
-                        "Oak: Singing together — how singing helps us work together",
-                        "Oak: Compose and create — recording musical ideas using a graphic score",
-                        "Oak: Music and movement — using symbols to represent pitch",
-                        "Oak: Compose and create — improvising with four notes",
-                        "Oak: Singing for performance — adding a simple vocal accompaniment (+ soundscapes of the sea)"
+                        "Oak National Academy: Start with singing — learning through singing games",
+                        "Oak National Academy: Singing together — how singing helps us work together",
+                        "Oak National Academy: Compose and create — recording musical ideas using a graphic score",
+                        "Oak National Academy: Music and movement — using symbols to represent pitch",
+                        "Oak National Academy: Compose and create — improvising with four notes",
+                        "Oak National Academy: Singing for performance — adding a simple vocal accompaniment (+ soundscapes of the sea)"
                 ],
                 "Key skills": [
                         "Singing games; vocal technique; pitch accuracy; learning through play",
@@ -1748,10 +1748,10 @@ const YEAR_DATA = {"Y1":{"yearGroup":"Y1","learningZone":"Beech Learning Zone","
       },
       {
             "id": "cit-y3-5", "order": 1, "term": 5, "stateOfBeing": "Citizen",
-            "keyQuestion": "How can I be a positive member of my school community?",
+            "keyQuestion": "How do I build and maintain positive relationships with family and friends?",
             "linkedText": "", "genre": "", "writingOutcome": "", "planningStatus": "new",
             "weekStart": 1, "weekEnd": 5,
-            "overview": "Jigsaw — Relationships\nBeing part of a class team · Being a school citizen · Rights, responsibilities and democracy (school council) · Rewards and consequences · Group decision-making · Having a voice · What motivates behaviour",
+            "overview": "Jigsaw — Relationships\nFamily roles and responsibilities · Friendship and negotiation · Keeping safe online and who to go to for help · Being a global citizen · Being aware of how my choices affect others · Awareness of how other children have different lives · Expressing appreciation for family and friends",
             "contentSkills": "", "crossCurricular": ""
       },
       {
@@ -1964,12 +1964,12 @@ const YEAR_DATA = {"Y1":{"yearGroup":"Y1","learningZone":"Beech Learning Zone","
         },
         "music": {
                 "Unit": [
-                        "Oak: Start with playing — adding percussive layers to build texture in our songs",
-                        "Oak: Singing together — how songs are used in communities",
-                        "Oak: Compose and Create — notating and performing using rhythm grids",
-                        "Oak: Playing together — building texture with melody, drone and ostinato",
-                        "Oak: Compose and Create — major pentatonic melodies",
-                        "Oak: Singing for performance — holding a second part in rounds and partner songs"
+                        "Oak National Academy: Start with playing — adding percussive layers to build texture in our songs",
+                        "Oak National Academy: Singing together — how songs are used in communities",
+                        "Oak National Academy: Compose and Create — notating and performing using rhythm grids",
+                        "Oak National Academy: Playing together — building texture with melody, drone and ostinato",
+                        "Oak National Academy: Compose and Create — major pentatonic melodies",
+                        "Oak National Academy: Singing for performance — holding a second part in rounds and partner songs"
                 ],
                 "Key skills": [
                         "Percussion layers; texture; adding percussive parts; tuned and untuned instruments",
@@ -2094,19 +2094,19 @@ const YEAR_DATA = {"Y1":{"yearGroup":"Y1","learningZone":"Beech Learning Zone","
       {
             "id": "cit-y4-1", "order": 1, "term": 1,
             "stateOfBeing": "Citizen",
-            "keyQuestion": "How can I be a responsible citizen and member of my school community?",
+            "keyQuestion": "How can I be a responsible citizen and take ownership of my learning this year?",
             "linkedText": "", "genre": "", "writingOutcome": "", "planningStatus": "new",
             "weekStart": 1, "weekEnd": 8,
-            "overview": "Jigsaw — Being Me In My World\nBeing part of a class team · Being a school citizen · Rights, responsibilities and democracy (school council) · Rewards and consequences · Group decision-making · Having a voice · What motivates behaviour",
+            "overview": "Jigsaw — Being Me In My World\nPlanning the forthcoming year · Being a citizen · Rights and responsibilities · Rewards and consequences · How behaviour affects groups · Democracy, having a voice · Participating",
             "contentSkills": "", "crossCurricular": ""
       },
       {
             "id": "cit-y4-2", "order": 1, "term": 2,
             "stateOfBeing": "Citizen",
-            "keyQuestion": "How do we celebrate our differences and challenge bullying?",
+            "keyQuestion": "How do we challenge stereotypes and stand up for inclusion?",
             "linkedText": "", "genre": "", "writingOutcome": "", "planningStatus": "new",
             "weekStart": 1, "weekEnd": 7,
-            "overview": "Jigsaw — Celebrating Difference\nChallenging assumptions · Judging by appearance · Accepting self and others · Understanding influences · Understanding bullying · Problem-solving · Identifying how special and unique everyone is · First impressions",
+            "overview": "Jigsaw — Celebrating Difference\nPerceptions of normality · Understanding disability · Power struggles · Understanding bullying · Inclusion/exclusion · Differences as conflict, difference as celebration · Empathy",
             "contentSkills": "", "crossCurricular": ""
       },
       {
@@ -2124,7 +2124,7 @@ const YEAR_DATA = {"Y1":{"yearGroup":"Y1","learningZone":"Beech Learning Zone","
             "keyQuestion": "How do I make healthy, safe choices in different situations?",
             "linkedText": "", "genre": "", "writingOutcome": "", "planningStatus": "new",
             "weekStart": 1, "weekEnd": 6,
-            "overview": "Jigsaw — Healthy Me\nHealthier friendships · Peer influences · Railway safety · Staying safe with friends · Smoking, alcohol and vaping · Assertiveness · Peer pressure · Celebrating inner strength",
+            "overview": "Jigsaw — Healthy Me\nHealthier friendships · Group dynamics · Smoking · Alcohol · Assertiveness · Peer pressure · Celebrating inner strength",
             "contentSkills": "", "crossCurricular": ""
       },
       {
@@ -2142,7 +2142,7 @@ const YEAR_DATA = {"Y1":{"yearGroup":"Y1","learningZone":"Beech Learning Zone","
             "keyQuestion": "How do I understand and feel positive about the changes happening in me?",
             "linkedText": "", "genre": "", "writingOutcome": "", "planningStatus": "new",
             "weekStart": 1, "weekEnd": 7,
-            "overview": "Jigsaw — Changing Me\nBeing unique · Girls and puberty · Being part of a family · Confidence in change · Accepting change · Preparing for transition · Environmental change",
+            "overview": "Jigsaw — Changing Me\nBeing unique · Having a baby · Girls and puberty · Confidence in change · Accepting change · Preparing for transition · Environmental change",
             "contentSkills": "", "crossCurricular": ""
       },
       {
@@ -2477,12 +2477,12 @@ const YEAR_DATA = {"Y1":{"yearGroup":"Y1","learningZone":"Beech Learning Zone","
         },
         "music": {
                 "Unit": [
-                        "Oak: Start with playing — adding layers to major and minor songs",
-                        "Oak: Singing together — how stories are shared through song",
-                        "Oak: Compose and Create — improvising within Hindustani classical music",
-                        "Oak: Playing together — effective rehearsing as part of an ensemble",
-                        "Oak: Compose and Create — composing a major melody on a stave",
-                        "Oak: Singing for performance — discovering different ways to sing in harmony (+ cosmic programme music)"
+                        "Oak National Academy: Start with playing — adding layers to major and minor songs",
+                        "Oak National Academy: Singing together — how stories are shared through song",
+                        "Oak National Academy: Compose and Create — improvising within Hindustani classical music",
+                        "Oak National Academy: Playing together — effective rehearsing as part of an ensemble",
+                        "Oak National Academy: Compose and Create — composing a major melody on a stave",
+                        "Oak National Academy: Singing for performance — discovering different ways to sing in harmony (+ cosmic programme music)"
                 ],
                 "Key skills": [
                         "Major and minor; layering instrumental parts; ensemble texture; tuned instruments",
@@ -2606,18 +2606,18 @@ const YEAR_DATA = {"Y1":{"yearGroup":"Y1","learningZone":"Beech Learning Zone","
 }},"Y5":{"yearGroup":"Y5","learningZone":"Hazel Learning Zone","colour":"#e57d24","colourDark":"#b85e1a","colourLight":"#fef3e2","colourMid":"#fddcb5","keyStage":"KS2","phase":"UKS2","enquiries":[
       {
             "id": "cit-y5-1", "order": 1, "term": 1, "stateOfBeing": "Citizen",
-            "keyQuestion": "How can I be a global citizen and make a difference?",
+            "keyQuestion": "How can I be an active school citizen and use my voice responsibly?",
             "linkedText": "", "genre": "", "writingOutcome": "", "planningStatus": "new",
             "weekStart": 1, "weekEnd": 8,
-            "overview": "Jigsaw — Being Me in My World\nIdentifying goals for the year · Global citizenship · Children's universal rights · Feeling welcome and valued · Choices, consequences and rewards · Group dynamics · Democracy, having a voice · Anti-social behaviour · Role-modelling",
+            "overview": "Jigsaw — Being Me in My World\nBeing part of a class team · Being a school citizen · Rights, responsibilities and democracy (school council) · Rewards and consequences · Group decision-making · Having a voice · What motivates behaviour",
             "contentSkills": "", "crossCurricular": ""
       },
       {
             "id": "cit-y5-2", "order": 1, "term": 2, "stateOfBeing": "Citizen",
-            "keyQuestion": "How does understanding difference help us build a fairer world?",
+            "keyQuestion": "How do cultural differences shape our world, and how do we challenge discrimination?",
             "linkedText": "", "genre": "", "writingOutcome": "", "planningStatus": "new",
             "weekStart": 1, "weekEnd": 7,
-            "overview": "Jigsaw — Celebrating Difference\nPerceptions of normality · Understanding disability · Power struggles · Understanding bullying · Inclusion and exclusion · Differences as conflict, difference as celebration · Empathy",
+            "overview": "Jigsaw — Celebrating Difference\nCultural differences and how they can cause conflict · Racism · Rumours and name-calling · Types of bullying · Material wealth and happiness · Enjoying and respecting other cultures",
             "contentSkills": "", "crossCurricular": ""
       },
       {
@@ -2934,12 +2934,12 @@ const YEAR_DATA = {"Y1":{"yearGroup":"Y1","learningZone":"Beech Learning Zone","
         },
         "music": {
                 "Unit": [
-                        "Oak: Sing, play, perform — adding tuned accompaniment to part-singing",
-                        "Oak: Singing together — how songs unite us",
-                        "Oak: Compose and rehearse — creating and combining minimalist cells",
-                        "Oak: Playing together — discovering different vocal timbres",
-                        "Oak: Compose and Create — composing a minor melody on a stave",
-                        "Oak: Singing for performance — syncopation in songs"
+                        "Oak National Academy: Sing, play, perform — adding tuned accompaniment to part-singing",
+                        "Oak National Academy: Singing together — how songs unite us",
+                        "Oak National Academy: Compose and rehearse — creating and combining minimalist cells",
+                        "Oak National Academy: Playing together — discovering different vocal timbres",
+                        "Oak National Academy: Compose and Create — composing a minor melody on a stave",
+                        "Oak National Academy: Singing for performance — syncopation in songs"
                 ],
                 "Key skills": [
                         "Tuned accompaniment; part-singing; harmonic awareness; ensemble co-ordination",
@@ -3066,15 +3066,15 @@ const YEAR_DATA = {"Y1":{"yearGroup":"Y1","learningZone":"Beech Learning Zone","
             "keyQuestion": "What are my personal goals and how can I make a positive difference in the world?",
             "linkedText": "", "genre": "", "writingOutcome": "", "planningStatus": "new",
             "weekStart": 1, "weekEnd": 8,
-            "overview": "Jigsaw — Being Me in My World\nPersonal learning goals, in and out of school · Success criteria · Emotions in success · Making a difference in the world · Motivation · Recognising achievements · Compliments",
+            "overview": "Jigsaw — Being Me in My World\nIdentifying goals for the year · Global citizenship · Children's universal rights · Feeling welcome and valued · Choices, consequences and rewards · Group dynamics · Democracy, having a voice · Anti-social behaviour · Role-modelling",
             "contentSkills": "", "crossCurricular": ""
       },
       {
             "id": "cit-y6-2", "order": 1, "term": 2, "stateOfBeing": "Citizen",
-            "keyQuestion": "How do we challenge racism and celebrate cultural diversity?",
+            "keyQuestion": "How do I challenge my own assumptions and build empathy across difference?",
             "linkedText": "", "genre": "", "writingOutcome": "", "planningStatus": "new",
             "weekStart": 1, "weekEnd": 7,
-            "overview": "Jigsaw — Celebrating Difference\nCultural differences and how they can cause conflict · Racism · Rumours and name-calling · Types of bullying · Material wealth and happiness · Enjoying and respecting other cultures",
+            "overview": "Jigsaw — Celebrating Difference\nChallenging assumptions · Judging by appearance · Accepting self and others · Understanding influences · Understanding bullying · Problem-solving · Identifying how special and unique everyone is · First impressions",
             "contentSkills": "", "crossCurricular": ""
       },
       {
@@ -3082,7 +3082,7 @@ const YEAR_DATA = {"Y1":{"yearGroup":"Y1","learningZone":"Beech Learning Zone","
             "keyQuestion": "What are my dreams and how do I take personal responsibility to achieve them?",
             "linkedText": "", "genre": "", "writingOutcome": "", "planningStatus": "new",
             "weekStart": 1, "weekEnd": 6,
-            "overview": "Jigsaw — Dreams and Goals\nPersonal ambitions · Recognising achievements · Emotions in success · Making a difference in the world · Motivation",
+            "overview": "Jigsaw — Dreams and Goals\nPersonal learning goals, in and out of school · Success criteria · Emotions in success · Making a difference in the world · Motivation · Recognising achievements · Compliments",
             "contentSkills": "", "crossCurricular": ""
       },
       {
@@ -3374,12 +3374,12 @@ const YEAR_DATA = {"Y1":{"yearGroup":"Y1","learningZone":"Beech Learning Zone","
         },
         "music": {
                 "Unit": [
-                        "Oak: Sing, play, perform — accompanying songs with polyrhythms",
-                        "Oak: Singing together — music that comments on social change",
-                        "Oak: Compose and rehearse — improvising with the minor pentatonic scale",
-                        "Oak: Playing together — arranging and rehearsing a fusion performance",
-                        "Oak: Compose and Create — creating melodic variations based on a theme",
-                        "Oak: Singing for performance — conveying emotion and character through performance (+ film score composition)"
+                        "Oak National Academy: Sing, play, perform — accompanying songs with polyrhythms",
+                        "Oak National Academy: Singing together — music that comments on social change",
+                        "Oak National Academy: Compose and rehearse — improvising with the minor pentatonic scale",
+                        "Oak National Academy: Playing together — arranging and rehearsing a fusion performance",
+                        "Oak National Academy: Compose and Create — creating melodic variations based on a theme",
+                        "Oak National Academy: Singing for performance — conveying emotion and character through performance (+ film score composition)"
                 ],
                 "Key skills": [
                         "Polyrhythms; layering cross-rhythms; ensemble; rhythmic independence and co-ordination",
@@ -3554,6 +3554,7 @@ const SOB_META = {
 };
 
 const WIDER_DEF = [
+  { key:'reader',    icon:'📖',  name:'Reader',              colour:'#4f46e5', rows:[{label:'Writing linked texts'},{label:'Enquiry linked texts'},{label:'Story time texts'}] },
   { key:'maths',     icon:'➕',  name:'Mathematician',       colour:'#ca8a04', rows:[{label:'Weekly sequence'}] },
   { key:'art',       icon:'🎨',  name:'Artist',              colour:'#b45309', rows:[{label:'Unit'},{label:'Key vocabulary'}] },
   { key:'dt',        icon:'🔧',  name:'Designer',            colour:'#0891b2', rows:[{label:'Unit'}] },
@@ -3568,6 +3569,7 @@ const WIDER_DEF = [
 
 const MASTER_ORDER = [
   {type:'sob',   key:'Writer'},
+  {type:'wider', key:'reader'},
   {type:'wider', key:'oracy'},
   {type:'wider', key:'maths'},
   {type:'sob',   key:'Geographer'},
