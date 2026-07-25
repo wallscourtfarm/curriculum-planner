@@ -437,7 +437,7 @@
   <div class="nav-spacer"></div>
   <button class="nav-export-btn" onclick="exportJSON()">Export JSON</button>
   <button class="nav-export-btn" onclick="openImporter()" style="background:#dcfce7;color:#166534;border-color:#bbf7d0">Import Excel</button>
-  <span class="nav-version">25.07.26c</span>
+  <span class="nav-version">25.07.26d</span>
 </nav>
 
 <!-- ── Year chips (second row) ── -->
@@ -3739,8 +3739,10 @@ const SPILL_TEXT = { new:'New — needs building', some:'Some resources exist', 
 function loadData(k) { try { return JSON.parse(localStorage.getItem('wfa_cp_'+k)||'{}'); } catch { return {}; } }
 function saveData(k, d) { localStorage.setItem('wfa_cp_'+k, JSON.stringify(d)); }
 
-function getEnq(k, id) {
-  const base = (YEAR_DATA[k]?.enquiries||[]).find(e=>e.id===id) || {};
+function getEnq(k, id, stateOfBeing) {
+  const all = YEAR_DATA[k]?.enquiries||[];
+  const base = (stateOfBeing ? all.find(e=>e.id===id && e.stateOfBeing===stateOfBeing) : null)
+             || all.find(e=>e.id===id) || {};
   const ov = (loadData(k).enquiries||{})[id] || {};
   return {...base, ...ov};
 }
@@ -3874,11 +3876,11 @@ function renderYear(k) {
     </div>`;
 
     sEnqs.forEach((e, idx) => {
-      const enq = getEnq(k, e.id);
+      const enq = getEnq(k, e.id, e.stateOfBeing);
       const wk = wkRange(e);
       const statusCls = enq.planningStatus && enq.planningStatus !== 'unknown' ? `tag-status-${enq.planningStatus}` : '';
       h += `<div class="enquiry-card" id="enq-${e.id}">
-        <button class="card-edit-btn" title="Edit this enquiry" onclick="openEnqEdit('${k}','${e.id}')">✏️</button>
+        <button class="card-edit-btn" title="Edit this enquiry" onclick="openEnqEdit('${k}','${e.id}','${e.stateOfBeing}')">✏️</button>
         <div class="enquiry-header">
           <div class="enquiry-number" style="background:${bg}">${idx+1}</div>
           <div class="enquiry-meta">
@@ -3953,7 +3955,7 @@ function renderGlanceGrid(k, enqs, yc, yd, yl, activeStates) {
         } else {
           h += `<div class="grid-cell${t===5?' no-right':''}" style="background:${bg}20">`;
           termEnqs.forEach(e => {
-            const enq = getEnq(k, e.id);
+            const enq = getEnq(k, e.id, e.stateOfBeing);
             const localWk = e.weekStart === e.weekEnd ? `W${e.weekStart}` : `W${e.weekStart}–${e.weekEnd}`;
             h += `<div class="cell-content" style="margin-bottom:4px;cursor:pointer" onclick="scrollToEnq('${e.id}')">
               <span class="cell-tag" style="background:${bg}">T${e.term} · ${localWk}</span>
@@ -4105,8 +4107,8 @@ function adjDur(delta) {
   _refreshSched();
 }
 
-function openEnqEdit(k, id) {
-  const enq = getEnq(k, id);
+function openEnqEdit(k, id, stateOfBeing) {
+  const enq = getEnq(k, id, stateOfBeing);
   const genres   = ['Entertain','Inform','Explain','Persuade','Argue','Recount','Instruct',''];
   const statuses = ['unknown','new','some','existing'];
   const term = enq.term || 1;
@@ -4327,7 +4329,7 @@ function renderCross() {
       if (!enqs.length) { h += '<div class="cross-cell-empty"></div>'; return; }
       h += '<div style="display:flex;flex-direction:column;gap:6px">';
       enqs.forEach(e => {
-        const enq = getEnq(k, e.id);
+        const enq = getEnq(k, e.id, e.stateOfBeing);
         h += `<div class="cross-cell" onclick="crossNav('${k}','${e.id}')">
           <div class="c-id">${e.id}</div>
           <div class="c-q">${esc(enq.keyQuestion)}</div>
@@ -4366,7 +4368,7 @@ function exportJSON() {
     learningZone: d.learningZone,
     colour: d.colour,
     exportDate: new Date().toISOString().slice(0,10),
-    enquiries: d.enquiries.map(e => getEnq(k, e.id)),
+    enquiries: d.enquiries.map(e => getEnq(k, e.id, e.stateOfBeing)),
     wider: ld.wider || {}
   };
   const blob = new Blob([JSON.stringify(merged, null, 2)], {type:'application/json'});
@@ -4556,7 +4558,7 @@ function buildDiff() {
         note:`${matches.length} enquiries match term ${termVal} + "${sobVal}" — cannot auto-assign` });
     } else {
       const base = matches[0];
-      const enq = getEnq(k, base.id);
+      const enq = getEnq(k, base.id, base.stateOfBeing);
       const changes = {};
       IMP_FIELDS.forEach(f => {
         if (m[f.key] < 0) return;
