@@ -80,15 +80,14 @@
   /* ── Jump nav ── */
   .nav-bar {
     background: #fff; border: 1px solid var(--border); border-radius: 10px;
-    padding: 8px 14px; margin-bottom: 28px;
-    display: flex; flex-direction: column; gap: 5px;
+    padding: 10px 14px; margin-bottom: 28px;
+    display: flex; flex-wrap: wrap; gap: 5px; align-items: center;
   }
-  .nav-row { display: flex; flex-wrap: wrap; gap: 5px; align-items: center; }
-  .nav-row + .nav-row { border-top: 1px solid var(--border); padding-top: 5px; }
-  .nav-bar .jlabel { font-size: 10px; font-weight: 700; color: #cbd5e1; text-transform: uppercase; letter-spacing: .06em; margin-right: 2px; white-space: nowrap; }
+  .nav-bar .jlabel { font-size: 11px; font-weight: 700; color: var(--grey); text-transform: uppercase; letter-spacing: .06em; margin-right: 4px; }
   .nav-link {
     font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 6px;
     text-decoration: none; color: var(--grey); border: 1px solid var(--border); transition: all .15s;
+    min-width: 100px; text-align: center; display: inline-flex; align-items: center; justify-content: center; gap: 4px; box-sizing: border-box;
   }
   .nav-link:hover { color: var(--text); background: var(--light-grey); }
   .nav-sub-link {
@@ -516,7 +515,7 @@
   <div class="nav-spacer"></div>
   <button class="nav-export-btn" onclick="exportJSON()">Export JSON</button>
   <button class="nav-export-btn" onclick="openImporter()" style="background:#dcfce7;color:#166534;border-color:#bbf7d0">Import Excel</button>
-  <span class="nav-version">25.07.26m</span>
+  <span class="nav-version">25.07.26n</span>
 </nav>
 
 <!-- ── Year chips (second row) ── -->
@@ -1061,29 +1060,25 @@ function renderYear(k) {
   </div>`;
 
   // ── Jump nav ──
-  const LITERACY_WIDER = new Set(['reader','oracy']);
-  let navLit = `<span class="jlabel">Literacy</span>`;
-  let navSubj = `<span class="jlabel">Subjects</span>`;
+  h += `<div class="nav-bar"><span class="jlabel">Jump to</span>`;
   MASTER_ORDER.forEach(item => {
     if (item.type === 'sob') {
       const s = item.key;
       if (!activeStates.includes(s)) return;
-      const link = `<a class="nav-link" href="#s-${s.toLowerCase().replace(/ /g,'-')}" style="border-color:${sobBg(s)};color:${sobBg(s)}">${sobImg(s,16)} ${s}</a>`;
-      const widerLinks = WIDER_DEF.filter(w => w.group === s).map(w => {
+      h += `<a class="nav-link" href="#s-${s.toLowerCase().replace(/ /g,'-')}" style="border-color:${sobBg(s)};color:${sobBg(s)}">${sobImg(s,16)} ${s}</a>`;
+      WIDER_DEF.filter(w => w.group === s).forEach(w => {
         const wi = SOB_ICON[w.name] ? sobImg(w.name, 14) : w.icon;
-        return `<a class="nav-link" href="#s-wider-${w.key}" style="border-color:${w.colour};color:${w.colour}">${wi} ${w.name}</a>`;
-      }).join('');
-      if (s === 'Writer') { navLit += link + widerLinks; } else { navSubj += link; }
+        h += `<a class="nav-link" href="#s-wider-${w.key}" style="border-color:${w.colour};color:${w.colour}">${wi} ${w.name}</a>`;
+      });
     } else {
       const w = WIDER_DEF.find(x => x.key === item.key);
       if (!w) return;
       const wi = SOB_ICON[w.name] ? sobImg(w.name, 14) : w.icon;
-      const link = `<a class="nav-link" href="#s-wider-${w.key}" style="border-color:${w.colour};color:${w.colour}">${wi} ${w.name}</a>`;
-      if (LITERACY_WIDER.has(item.key)) { navLit += link; } else { navSubj += link; }
+      h += `<a class="nav-link" href="#s-wider-${w.key}" style="border-color:${w.colour};color:${w.colour}">${wi} ${w.name}</a>`;
     }
   });
-  navSubj += `<a class="nav-link" href="#" onclick="event.preventDefault();showCoverage('${k}')" style="border-color:#7c3aed;color:#7c3aed;margin-left:auto">📊 Writing Coverage</a>`;
-  h += `<div class="nav-bar"><div class="nav-row">${navLit}</div><div class="nav-row">${navSubj}</div></div>`;
+  h += `<a class="nav-link" href="#" onclick="event.preventDefault();showCoverage('${k}')" style="border-color:#7c3aed;color:#7c3aed;margin-left:auto;min-width:auto">📊 Writing Coverage</a>`;
+  h += `</div>`;
 
   // ── Year at a glance ──
   h += renderGlanceGrid(k, enqs, yc, yd, yl, activeStates);
@@ -1124,7 +1119,7 @@ function renderYear(k) {
           ${(() => {
             const scItems = (enq.successCriteria||'').split('\n').map(l=>l.trim()).filter(Boolean);
             const scRow = `<div class="wf-row" style="align-items:flex-start">
-              <span class="wf-label">Criteria</span>
+              <span class="wf-label">Success Criteria</span>
               ${scItems.length
                 ? `<ul class="sc-list" style="margin:0;flex:1">${scItems.map(l=>`<li title="${esc(l)}">${esc(l)}</li>`).join('')}</ul>`
                 : `<span class="placeholder" style="font-size:12px">Click ✏️ to add…</span>`}
