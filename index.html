@@ -437,7 +437,7 @@
   <div class="nav-spacer"></div>
   <button class="nav-export-btn" onclick="exportJSON()">Export JSON</button>
   <button class="nav-export-btn" onclick="openImporter()" style="background:#dcfce7;color:#166534;border-color:#bbf7d0">Import Excel</button>
-  <span class="nav-version">25.07.26b</span>
+  <span class="nav-version">25.07.26c</span>
 </nav>
 
 <!-- ── Year chips (second row) ── -->
@@ -1086,8 +1086,7 @@ const YEAR_DATA = {"Y1":{"yearGroup":"Y1","learningZone":"Beech Learning Zone","
                 ]
         },
         "cs": {
-                "Unit": ["Technology around us","Digital painting","Moving a robot","Grouping data","Digital writing","Programming animations"],
-                "Strand": ["Computing systems and networks","Creating media","Programming A","Data and information","Creating media","Programming B"]
+                "Unit": ["Computing systems and networks – Technology around us","Creating media – Digital painting","Programming A – Moving a robot","Data and information – Grouping data","Creating media – Digital writing","Programming B – Programming animations"]
         }
 }},"Y2":{"yearGroup":"Y2","learningZone":"Willow Learning Zone","colour":"#2bae62","colourDark":"#1e8a4a","colourLight":"#e8faf0","colourMid":"#c3f0d7","keyStage":"KS1","phase":"KS1","enquiries":[
       {
@@ -1632,8 +1631,7 @@ const YEAR_DATA = {"Y1":{"yearGroup":"Y1","learningZone":"Beech Learning Zone","
                 ]
         },
         "cs": {
-                "Unit": ["IT around us","Digital photography","Robot algorithms","Pictograms","Digital music","Programming quizzes"],
-                "Strand": ["Computing systems and networks","Creating media","Programming A","Data and information","Creating media","Programming B"]
+                "Unit": ["Computing systems and networks – IT around us","Creating media – Digital photography","Programming A – Robot algorithms","Data and information – Pictograms","Creating media – Digital music","Programming B – Programming quizzes"]
         }
 }},"Y3":{"yearGroup":"Y3","learningZone":"Acer Learning Zone","colour":"#c0157b","colourDark":"#920f5e","colourLight":"#fce4f3","colourMid":"#f5b8de","keyStage":"KS2","phase":"LKS2","enquiries":[
       {
@@ -2162,8 +2160,7 @@ const YEAR_DATA = {"Y1":{"yearGroup":"Y1","learningZone":"Beech Learning Zone","
                 ]
         },
         "cs": {
-                "Unit": ["Connecting computers","Stop-frame animation","Sequencing sounds","Branching databases","Desktop publishing","Events and actions in programs"],
-                "Strand": ["Computing systems and networks","Creating media","Programming A","Data and information","Creating media","Programming B"]
+                "Unit": ["Computing systems and networks – Connecting computers","Creating media – Stop-frame animation","Programming A – Sequencing sounds","Data and information – Branching databases","Creating media – Desktop publishing","Programming B – Events and actions in programs"]
         }
 }},"Y4":{"yearGroup":"Y4","learningZone":"Maple Learning Zone","colour":"#1798d3","colourDark":"#0f6fa3","colourLight":"#e0f2fe","colourMid":"#bae0f5","keyStage":"KS2","phase":"LKS2","enquiries":[
       {
@@ -2700,8 +2697,7 @@ const YEAR_DATA = {"Y1":{"yearGroup":"Y1","learningZone":"Beech Learning Zone","
                 ]
         },
         "cs": {
-                "Unit": ["The Internet","Audio production","Repetition in shapes","Data logging","Photo editing","Repetition in games"],
-                "Strand": ["Computing systems and networks","Creating media","Programming A","Data and information","Creating media","Programming B"]
+                "Unit": ["Computing systems and networks – The Internet","Creating media – Audio production","Programming A – Repetition in shapes","Data and information – Data logging","Creating media – Photo editing","Programming B – Repetition in games"]
         }
 }},"Y5":{"yearGroup":"Y5","learningZone":"Hazel Learning Zone","colour":"#e57d24","colourDark":"#b85e1a","colourLight":"#fef3e2","colourMid":"#fddcb5","keyStage":"KS2","phase":"UKS2","enquiries":[
       {
@@ -3182,8 +3178,7 @@ const YEAR_DATA = {"Y1":{"yearGroup":"Y1","learningZone":"Beech Learning Zone","
                 ]
         },
         "cs": {
-                "Unit": ["Systems and searching","Video production","Selection in physical computing","Flat-file databases","Introduction to vector graphics","Selection in quizzes"],
-                "Strand": ["Computing systems and networks","Creating media","Programming A","Data and information","Creating media","Programming B"]
+                "Unit": ["Computing systems and networks – Systems and searching","Creating media – Video production","Programming A – Selection in physical computing","Data and information – Flat-file databases","Creating media – Introduction to vector graphics","Programming B – Selection in quizzes"]
         }
 }},"Y6":{"yearGroup":"Y6","learningZone":"Elm Learning Zone","colour":"#2bae62","colourDark":"#1e8a4a","colourLight":"#e8faf0","colourMid":"#c3f0d7","keyStage":"KS2","phase":"UKS2","enquiries":[
       {
@@ -3647,8 +3642,7 @@ const YEAR_DATA = {"Y1":{"yearGroup":"Y1","learningZone":"Beech Learning Zone","
                 ]
         },
         "cs": {
-                "Unit": ["Communication and collaboration","Web page creation","Variables in games","Spreadsheets","3D Modelling","Sensing movement"],
-                "Strand": ["Computing systems and networks","Creating media","Programming A","Data and information","Creating media","Programming B"]
+                "Unit": ["Computing systems and networks – Communication and collaboration","Creating media – Web page creation","Programming A – Variables in games","Data and information – Spreadsheets","Creating media – 3D Modelling","Programming B – Sensing movement"]
         }}}};
 
 // ════════════════════════════════════════════════════════════
@@ -3713,7 +3707,7 @@ const WIDER_DEF = [
   { key:'music',     icon:'🎵',  name:'Musician',            colour:'#db2777', rows:[{label:'Unit'},{label:'Key skills'}] },
   { key:'pe',        icon:'🏃',  name:'Athlete',             colour:'#065f46', rows:[{label:'Strand'},{label:'Activity'}] },
   { key:'citizen',   icon:'🤝',  name:'Citizen',             colour:'#0d9488', rows:[{label:'Unit'},{label:'Learning outcomes'}] },
-  { key:'cs',        icon:'💻',  name:'Computer Scientist',  colour:'#7c3aed', rows:[{label:'Unit'},{label:'Strand'}] },
+  { key:'cs',        icon:'💻',  name:'Computer Scientist',  colour:'#7c3aed', rows:[{label:'Unit'}] },
   { key:'mfl',       icon:'🌐',  name:'Linguist',            colour:'#be185d', rows:[{label:'Context'}] },
   { key:'oracy',     icon:'🗣️', name:'Oracy',               colour:'#0369a1', rows:[{label:'Strand'},{label:'Outcome'}] },
   { key:'spelling',  icon:'🔤',  name:'Spelling', group:'Writer',          colour:'#92400e', rows:[{label:'Weekly pattern'}] },
