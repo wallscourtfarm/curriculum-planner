@@ -166,7 +166,8 @@
   .tag-status-some { background: #fffbeb; color: #d97706; }
   .tag-status-existing { background: #f0fdf4; color: #16a34a; }
 
-  .enquiry-body { display: grid; grid-template-columns: 1fr 1fr; gap: 0; }
+  .enquiry-body { display: grid; grid-template-columns: 1fr 2fr; gap: 0; }
+  .enquiry-section .skill-chips { display: grid; grid-template-columns: repeat(2, 1fr); gap: 4px; }
   .enquiry-section { padding: 14px 18px; border-right: 1px solid var(--border); }
   .enquiry-section:last-child { border-right: none; }
   .enquiry-section h4 {
@@ -506,7 +507,7 @@
   <div class="nav-spacer"></div>
   <button class="nav-export-btn" onclick="exportJSON()">Export JSON</button>
   <button class="nav-export-btn" onclick="openImporter()" style="background:#dcfce7;color:#166534;border-color:#bbf7d0">Import Excel</button>
-  <span class="nav-version">25.07.26g</span>
+  <span class="nav-version">25.07.26h</span>
 </nav>
 
 <!-- ── Year chips (second row) ── -->
