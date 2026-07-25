@@ -516,7 +516,7 @@
   <button class="nav-export-btn" onclick="exportJSON()">Export JSON</button>
   <button class="nav-export-btn" onclick="openImporter()" style="background:#dcfce7;color:#166534;border-color:#bbf7d0">Import Excel</button>
   <span id="sync-status" style="font-size:11px;font-weight:600;color:#94a3b8;white-space:nowrap"></span>
-  <span class="nav-version">25.07.26o</span>
+  <span class="nav-version">25.07.26p</span>
 </nav>
 
 <!-- ── Year chips (second row) ── -->
@@ -959,7 +959,7 @@ const SPILL_TEXT = { new:'New — needs building', some:'Some resources exist', 
 // ════════════════════════════════════════════════════════════
 // STORAGE — localStorage + Google Apps Script sync
 // ════════════════════════════════════════════════════════════
-const GAS_URL = '';  // filled in after deployment
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbwgkJGVeJHQu1SAlXeoL_Rt-_FHt9j73Ld8YDI9E1-O1CFzzqoh5I6qnkEufpur2T57zg/exec';
 
 function loadData(k) { try { return JSON.parse(localStorage.getItem('wfa_cp_'+k)||'{}'); } catch { return {}; } }
 
