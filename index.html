@@ -516,7 +516,7 @@
   <div class="nav-spacer"></div>
   <button class="nav-export-btn" onclick="exportJSON()">Export JSON</button>
   <button class="nav-export-btn" onclick="openImporter()" style="background:#dcfce7;color:#166534;border-color:#bbf7d0">Import Excel</button>
-  <span class="nav-version">25.07.26l</span>
+  <span class="nav-version">25.07.26m</span>
 </nav>
 
 <!-- ── Year chips (second row) ── -->
@@ -1123,20 +1123,24 @@ function renderYear(k) {
         <div class="enquiry-body">
           ${(() => {
             const scItems = (enq.successCriteria||'').split('\n').map(l=>l.trim()).filter(Boolean);
-            const scHTML = `<div style="margin-top:7px;padding-top:6px;border-top:1px solid var(--border)">
-              <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#94a3b8;margin-bottom:3px">Success Criteria</div>
+            const scRow = `<div class="wf-row" style="align-items:flex-start">
+              <span class="wf-label">Criteria</span>
               ${scItems.length
-                ? `<ul class="sc-list">${scItems.map(l=>`<li title="${esc(l)}">${esc(l)}</li>`).join('')}</ul>`
-                : `<p class="placeholder" style="font-size:11.5px;margin:0">Click ✏️ to add success criteria…</p>`}
+                ? `<ul class="sc-list" style="margin:0;flex:1">${scItems.map(l=>`<li title="${esc(l)}">${esc(l)}</li>`).join('')}</ul>`
+                : `<span class="placeholder" style="font-size:12px">Click ✏️ to add…</span>`}
             </div>`;
+            const writerFields = (hasWF) => hasWF
+              ? `<div class="writing-fields">
+                  ${enq.genre ? `<div class="wf-row"><span class="wf-label">Purpose</span><span class="wf-val">${esc(enq.genre)}</span></div>` : ''}
+                  ${enq.audience ? `<div class="wf-row"><span class="wf-label">Audience</span><span class="wf-val">${esc(enq.audience)}</span></div>` : ''}
+                  ${enq.writingOutcome ? `<div class="wf-row"><span class="wf-label">Outcome</span><span class="wf-val">${esc(enq.writingOutcome)}</span></div>` : ''}
+                  ${scRow}
+                </div>`
+              : `<p class="placeholder" style="font-size:12px">Click ✏️ to set purpose, audience and outcome…</p>`;
+            const hasWF = !!(enq.audience||enq.genre||enq.writingOutcome);
             return state === 'Writer'
               ? `<div class="enquiry-section">
-                  ${enq.audience||enq.genre||enq.writingOutcome ? `<div class="writing-fields">
-                    ${enq.genre ? `<div class="wf-row"><span class="wf-label">Purpose</span><span class="wf-val">${esc(enq.genre)}</span></div>` : ''}
-                    ${enq.audience ? `<div class="wf-row"><span class="wf-label">Audience</span><span class="wf-val">${esc(enq.audience)}</span></div>` : ''}
-                    ${enq.writingOutcome ? `<div class="wf-row"><span class="wf-label">Outcome</span><span class="wf-val">${esc(enq.writingOutcome)}</span></div>` : ''}
-                  </div>` : `<p class="placeholder">Click ✏️ to set purpose, audience and outcome…</p>`}
-                  ${scHTML}
+                  ${writerFields(hasWF)}
                   ${enq.overview ? `<p class="content-lines" style="margin-top:8px;font-size:12px;color:#64748b">${esc(enq.overview)}</p>` : ''}
                 </div>`
               : `<div class="enquiry-section is-split">
@@ -1148,12 +1152,7 @@ function renderYear(k) {
                   </div>
                   <div class="enq-sub">
                     <h4>Writer Outcome</h4>
-                    ${enq.audience||enq.genre||enq.writingOutcome ? `<div class="writing-fields">
-                      ${enq.genre ? `<div class="wf-row"><span class="wf-label">Purpose</span><span class="wf-val">${esc(enq.genre)}</span></div>` : ''}
-                      ${enq.audience ? `<div class="wf-row"><span class="wf-label">Audience</span><span class="wf-val">${esc(enq.audience)}</span></div>` : ''}
-                      ${enq.writingOutcome ? `<div class="wf-row"><span class="wf-label">Outcome</span><span class="wf-val">${esc(enq.writingOutcome)}</span></div>` : ''}
-                    </div>` : `<p class="placeholder" style="font-size:12px">Click ✏️ to set purpose, audience and outcome…</p>`}
-                    ${scHTML}
+                    ${writerFields(!!(enq.audience||enq.genre||enq.writingOutcome))}
                   </div>
                 </div>`;
           })()}
