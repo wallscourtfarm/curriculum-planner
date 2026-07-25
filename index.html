@@ -169,6 +169,7 @@
   .enquiry-body { display: grid; grid-template-columns: 1fr 2fr; gap: 0; }
   .enquiry-section .skill-chips { display: grid; grid-template-columns: repeat(2, 1fr); gap: 4px; }
   .enquiry-section { padding: 14px 18px; border-right: 1px solid var(--border); }
+  .enquiry-section.is-split { padding: 0; display: flex; flex-direction: column; }
   .enquiry-section:last-child { border-right: none; }
   .enquiry-section h4 {
     font-size: 11px; font-weight: 800; text-transform: uppercase;
@@ -177,6 +178,9 @@
   .enquiry-section p { font-size: 13px; line-height: 1.65; }
   .enquiry-section .placeholder { font-size: 13px; color: #cbd5e1; font-style: italic; }
   .enquiry-section .content-lines { font-size: 13px; line-height: 1.65; white-space: pre-wrap; }
+  .enq-sub { padding: 10px 18px; }
+  .enq-sub + .enq-sub { border-top: 1px solid var(--border); }
+  .enq-sub h4 { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; color: var(--grey); margin-bottom: 6px; }
 
   .links-row {
     background: var(--light-grey); border-top: 1px solid var(--border);
@@ -432,7 +436,7 @@
 
   /* ── Skill chips ── */
   .skill-chips { display: flex; flex-wrap: wrap; gap: 5px; }
-  .skill-chip { display: inline-block; border-radius: 5px; padding: 2px 8px; font-size: 11px; font-weight: 600; max-width: 100%; }
+  .skill-chip { display: block; border-radius: 5px; padding: 2px 8px; font-size: 11px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .sc-Composition { background:#dbeafe; color:#1e3a8a; }
   .sc-Sentence { background:#d1fae5; color:#065f46; }
   .sc-Tense { background:#fef3c7; color:#78350f; }
@@ -507,7 +511,7 @@
   <div class="nav-spacer"></div>
   <button class="nav-export-btn" onclick="exportJSON()">Export JSON</button>
   <button class="nav-export-btn" onclick="openImporter()" style="background:#dcfce7;color:#166534;border-color:#bbf7d0">Import Excel</button>
-  <span class="nav-version">25.07.26h</span>
+  <span class="nav-version">25.07.26i</span>
 </nav>
 
 <!-- ── Year chips (second row) ── -->
@@ -1109,14 +1113,31 @@ function renderYear(k) {
           </div>
         </div>
         <div class="enquiry-body">
-          <div class="enquiry-section">
-            ${enq.audience||enq.genre||enq.writingOutcome ? `<div class="writing-fields">
-              ${enq.genre ? `<div class="wf-row"><span class="wf-label">Purpose</span><span class="wf-val">${esc(enq.genre)}</span></div>` : ''}
-              ${enq.audience ? `<div class="wf-row"><span class="wf-label">Audience</span><span class="wf-val">${esc(enq.audience)}</span></div>` : ''}
-              ${enq.writingOutcome ? `<div class="wf-row"><span class="wf-label">Outcome</span><span class="wf-val">${esc(enq.writingOutcome)}</span></div>` : ''}
-            </div>` : `<p class="placeholder">Click ✏️ to set audience, purpose and outcome…</p>`}
-            ${enq.overview ? `<p class="content-lines" style="margin-top:8px;font-size:12px;color:#64748b">${esc(enq.overview)}</p>` : ''}
-          </div>
+          ${state === 'Writer'
+            ? `<div class="enquiry-section">
+                ${enq.audience||enq.genre||enq.writingOutcome ? `<div class="writing-fields">
+                  ${enq.genre ? `<div class="wf-row"><span class="wf-label">Purpose</span><span class="wf-val">${esc(enq.genre)}</span></div>` : ''}
+                  ${enq.audience ? `<div class="wf-row"><span class="wf-label">Audience</span><span class="wf-val">${esc(enq.audience)}</span></div>` : ''}
+                  ${enq.writingOutcome ? `<div class="wf-row"><span class="wf-label">Outcome</span><span class="wf-val">${esc(enq.writingOutcome)}</span></div>` : ''}
+                </div>` : `<p class="placeholder">Click ✏️ to set purpose, audience and outcome…</p>`}
+                ${enq.overview ? `<p class="content-lines" style="margin-top:8px;font-size:12px;color:#64748b">${esc(enq.overview)}</p>` : ''}
+              </div>`
+            : `<div class="enquiry-section is-split">
+                <div class="enq-sub">
+                  <h4>${esc(state)} Outcome</h4>
+                  ${enq.subjectOutcome
+                    ? `<p class="content-lines" style="font-size:12px;color:#1e293b;margin:0">${esc(enq.subjectOutcome)}</p>`
+                    : `<p class="placeholder" style="font-size:12px">Click ✏️ to add ${esc(state.toLowerCase())} outcome…</p>`}
+                </div>
+                <div class="enq-sub">
+                  <h4>Writer Outcome</h4>
+                  ${enq.audience||enq.genre||enq.writingOutcome ? `<div class="writing-fields">
+                    ${enq.genre ? `<div class="wf-row"><span class="wf-label">Purpose</span><span class="wf-val">${esc(enq.genre)}</span></div>` : ''}
+                    ${enq.audience ? `<div class="wf-row"><span class="wf-label">Audience</span><span class="wf-val">${esc(enq.audience)}</span></div>` : ''}
+                    ${enq.writingOutcome ? `<div class="wf-row"><span class="wf-label">Outcome</span><span class="wf-val">${esc(enq.writingOutcome)}</span></div>` : ''}
+                  </div>` : `<p class="placeholder" style="font-size:12px">Click ✏️ to set purpose, audience and outcome…</p>`}
+                </div>
+              </div>`}
           <div class="enquiry-section">
             <h4>Writing Skills</h4>
             ${(enq.writingSkills&&enq.writingSkills.length)
@@ -1334,6 +1355,7 @@ function openEnqEdit(k, id, stateOfBeing) {
   const ws   = enq.weekStart || 1;
   const we   = enq.weekEnd   || ws;
   const dur  = we - ws + 1;
+  const isWriter = stateOfBeing === 'Writer';
 
   const body = `
     <div class="modal-field" style="background:#f8fafc;border-radius:10px;padding:12px 14px;margin-bottom:16px;border:1px solid var(--border)">
@@ -1374,6 +1396,10 @@ function openEnqEdit(k, id, stateOfBeing) {
       <label>Linked Text</label>
       <input id="ef-lt" type="text" value="${esc(enq.linkedText||'')}">
     </div>
+    ${!isWriter ? `<div class="modal-field">
+      <label>${esc(stateOfBeing)} Outcome</label>
+      <input id="ef-so" type="text" placeholder="What will pupils achieve as ${esc(stateOfBeing.toLowerCase()+'s')}?" value="${esc(enq.subjectOutcome||'')}">
+    </div>` : ''}
     <div class="modal-field">
       <label>Purpose</label>
       <select id="ef-genre">
@@ -1418,6 +1444,7 @@ function openEnqEdit(k, id, stateOfBeing) {
       weekEnd:        parseInt(_efi('ef-wend').value),
       keyQuestion:    _efi('ef-kq').value,
       linkedText:     _efi('ef-lt').value,
+      subjectOutcome: !isWriter ? _efi('ef-so').value : '',
       genre:          _efi('ef-genre').value,
       audience:       _efi('ef-audience').value,
       writingOutcome: _efi('ef-wo').value,
