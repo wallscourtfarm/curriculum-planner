@@ -515,7 +515,8 @@
   <div class="nav-spacer"></div>
   <button class="nav-export-btn" onclick="exportJSON()">Export JSON</button>
   <button class="nav-export-btn" onclick="openImporter()" style="background:#dcfce7;color:#166534;border-color:#bbf7d0">Import Excel</button>
-  <span class="nav-version">25.07.26n</span>
+  <span id="sync-status" style="font-size:11px;font-weight:600;color:#94a3b8;white-space:nowrap"></span>
+  <span class="nav-version">25.07.26o</span>
 </nav>
 
 <!-- ── Year chips (second row) ── -->
@@ -526,7 +527,7 @@
 
 <footer>
   <span>39 Week Plan &mdash; 2025&ndash;26 &mdash; Wallscourt Farm Academy</span>
-  <strong>24.07.26n</strong>
+  <strong>25.07.26o</strong>
 </footer>
 
 <!-- ── Edit modal ── -->
@@ -956,10 +957,53 @@ const SDOT = { new:'#dc2626', some:'#d97706', existing:'#16a34a', unknown:'#cbd5
 const SPILL_TEXT = { new:'New — needs building', some:'Some resources exist', existing:'Existing resources', unknown:'Unknown' };
 
 // ════════════════════════════════════════════════════════════
-// STORAGE
+// STORAGE — localStorage + Google Apps Script sync
 // ════════════════════════════════════════════════════════════
+const GAS_URL = '';  // filled in after deployment
+
 function loadData(k) { try { return JSON.parse(localStorage.getItem('wfa_cp_'+k)||'{}'); } catch { return {}; } }
-function saveData(k, d) { localStorage.setItem('wfa_cp_'+k, JSON.stringify(d)); }
+
+function saveData(k, d) {
+  localStorage.setItem('wfa_cp_'+k, JSON.stringify(d));
+  if (!GAS_URL) return;
+  _setSyncStatus('saving');
+  fetch(GAS_URL, {
+    method: 'POST',
+    headers: {'Content-Type': 'text/plain'},
+    body: JSON.stringify({key: 'wfa_cp_'+k, data: d}),
+    redirect: 'follow'
+  }).then(r => r.json())
+    .then(r => _setSyncStatus(r.ok ? 'saved' : 'error'))
+    .catch(() => _setSyncStatus('offline'));
+}
+
+function _setSyncStatus(s) {
+  const el = document.getElementById('sync-status');
+  if (!el) return;
+  const cfg = {
+    loading: ['☁ Loading…',  '#94a3b8'],
+    saving:  ['☁ Saving…',   '#94a3b8'],
+    saved:   ['✓ Synced',    '#22c55e'],
+    error:   ['⚠ Save error','#ef4444'],
+    offline: ['⚠ Offline',   '#f59e0b'],
+  };
+  const [txt, col] = cfg[s] || ['','#94a3b8'];
+  el.textContent = txt;
+  el.style.color = col;
+}
+
+async function syncFromRemote() {
+  if (!GAS_URL) return;
+  _setSyncStatus('loading');
+  try {
+    const res = await fetch(GAS_URL + '?action=load', {redirect: 'follow'});
+    const json = await res.json();
+    if (json.ok && json.data) {
+      Object.entries(json.data).forEach(([k, v]) => localStorage.setItem(k, JSON.stringify(v)));
+    }
+    _setSyncStatus('saved');
+  } catch { _setSyncStatus('offline'); }
+}
 
 function getEnq(k, id, stateOfBeing) {
   const all = YEAR_DATA[k]?.enquiries||[];
@@ -2145,6 +2189,7 @@ function showCoverage(k) {
 // ════════════════════════════════════════════════════════════
 buildYearBar();
 renderYear(curYear);
+syncFromRemote().then(() => renderYear(curYear));
 </script>
 </body>
 </html>
