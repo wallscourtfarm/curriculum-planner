@@ -514,7 +514,7 @@
   <div class="nav-spacer"></div>
   <button class="nav-export-btn" onclick="exportJSON()">Export JSON</button>
   <button class="nav-export-btn" onclick="openImporter()" style="background:#dcfce7;color:#166534;border-color:#bbf7d0">Import Excel</button>
-  <span class="nav-version">25.07.26j</span>
+  <span class="nav-version">25.07.26k</span>
 </nav>
 
 <!-- ── Year chips (second row) ── -->
@@ -2088,7 +2088,11 @@ function showCoverage(k) {
   Object.entries(cats).forEach(([cat, skills]) => {
     rows += `<tr class="cov-sec-row"><td colspan="7">${cat}</td></tr>`;
     skills.forEach(s => {
-      const isGd = s.level !== 'expected';
+      const lvlBadge = s.level === 'non_negotiable'
+          ? '<span class="sp-nn-badge" style="display:inline-block;margin-right:4px">NN</span>'
+          : s.level === 'greater_depth'
+          ? '<span class="sp-gd-badge" style="display:inline-block;margin-right:4px">GD</span>'
+          : '';
       const tCells = [1,2,3,4,5,6].map(t => {
         const sobs = cov[s.id]?.[t] || [];
         if (!sobs.length) return '<td></td>';
@@ -2099,7 +2103,7 @@ function showCoverage(k) {
         return `<td>${dots}</td>`;
       }).join('');
       rows += `<tr>
-        <td class="cov-skill-text">${isGd?'<span class="sp-gd-badge" style="display:inline-block;margin-right:4px">GD</span>':''}${esc(s.text)}</td>
+        <td class="cov-skill-text">${lvlBadge}${esc(s.text)}</td>
         ${tCells}
       </tr>`;
     });
