@@ -38,6 +38,16 @@
   }
   .nav-export-btn:hover { background: #e2e8f0; }
   .nav-version { font-size: 11px; color: #94a3b8; font-weight: 700; letter-spacing: .5px; white-space: nowrap; }
+  #back-to-top {
+    position: fixed; bottom: 24px; right: 24px; z-index: 999;
+    width: 36px; height: 36px; border-radius: 50%;
+    background: #fff; border: 1.5px solid var(--border);
+    color: var(--grey); font-size: 15px; font-weight: 700;
+    cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,.10);
+    opacity: 0; pointer-events: none; transition: opacity .2s, box-shadow .15s;
+  }
+  #back-to-top.btt-visible { opacity: 1; pointer-events: auto; }
+  #back-to-top:hover { box-shadow: 0 4px 14px rgba(0,0,0,.15); color: var(--text); }
 
   /* ── Year chips bar ── */
   #year-bar {
@@ -537,7 +547,7 @@
   <button class="nav-export-btn" onclick="openImporter()" style="background:#dcfce7;color:#166534;border-color:#bbf7d0">Import Excel</button>
   <button class="nav-export-btn" onclick="openRollover(curYear)" style="background:#fef2f2;color:#dc2626;border-color:#fecaca" title="Prepare this year group for a new school year">↺ Rollover</button>
   <span id="sync-status" style="font-size:11px;font-weight:600;color:#94a3b8;white-space:nowrap"></span>
-  <span class="nav-version">26.07.26a</span>
+  <span class="nav-version">26.07.26b</span>
 </nav>
 
 <!-- ── Year chips (second row) ── -->
@@ -545,6 +555,7 @@
 
 <!-- ── Main content ── -->
 <div id="main"></div>
+<button id="back-to-top" title="Back to top">↑</button>
 
 <footer>
   <span>39 Week Plan &mdash; 2025&ndash;26 &mdash; Wallscourt Farm Academy</span>
@@ -2343,6 +2354,13 @@ function openRollover(k) {
 buildYearBar();
 renderYear(curYear);
 syncFromRemote().then(() => renderYear(curYear));
+
+// Back to top
+const _btt = document.getElementById('back-to-top');
+window.addEventListener('scroll', () => {
+  _btt.classList.toggle('btt-visible', window.scrollY > 400);
+}, {passive: true});
+_btt.addEventListener('click', () => window.scrollTo({top: 0, behavior: 'smooth'}));
 </script>
 </body>
 </html>
