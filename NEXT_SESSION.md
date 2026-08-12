@@ -1,5 +1,5 @@
 # Curriculum Planner — Next Session Handoff
-**Date written:** 24.07.26 | **Current version:** 24.07.26c
+**Date written:** 24.07.26, updated 12.08.26 | **Current version:** 12.08.26a
 
 ## Repo
 `~/Desktop/claude_code/curriculum-planner/index.html` → `https://wallscourtfarm.github.io/curriculum-planner/`
@@ -14,6 +14,9 @@ gh CLI authenticated as `imcl75` for `wallscourtfarm` org.
 - Week labels show T2·W1–2 format (local weeks)
 - **Bug fixed (24.07.26c):** Y6 wider curriculum data was displaced out of YEAR_DATA and into the exportJSON() function body, causing a JS syntax error that broke the whole page. Fixed by repositioning the Y6 wider block and closing exportJSON() correctly.
 - **Excel importer added (24.07.26c):** 3-step wizard accessible via "Import Excel" button in nav
+- **Enquiry view toggle added (12.08.26a):** any wider-curriculum subject with a matching `SOB_META` entry (Citizen, Computer Scientist, Artist, Designer, Musician, Athlete, Linguist) can be switched into the full enquiry-card layout via an "Enquiry view" checkbox in its section header — for the years a subject runs as a proper enquiry (e.g. a one-off Citizens or Computer Scientist unit) rather than a termly wider-curriculum bucket. State persists per year group in `loadData(k).enquiryMode`. Citizen already has 6 populated enquiries/year (Jigsaw PSHE) ready to view this way.
+- **Term Planner added (12.08.26a):** week-by-week Gantt view (`openPlanner()` / 🗓 Term Planner nav button) — this is Priority 3 below, now built. Drag a bar to move it to a different week (can cross term boundaries); drag its left/right edge to extend or compress by whole weeks (clamped to stay within one term). Overlapping enquiries in the same subject stack into lanes. Changes save via the existing `saveEnqField` overlay and immediately re-render both the planner and the main year view.
+- **Bug fixed (12.08.26a):** term/week edits (via the edit modal, duplicate, or the new Term Planner) were saved to the localStorage overlay but the main year view, Year-at-a-Glance grid, and Cross-Year view all read the *raw* embedded term/week instead of the merged overlay — so moving an enquiry to a different term never visibly took effect. Fixed by routing all three through a new `mergedEnqsFor()` helper.
 
 ---
 
@@ -70,18 +73,19 @@ Also `CLF Primary Curriculum Writers July 2026.md` (Writing coverage linked to e
 
 ---
 
-## Priority 3 — Term Zoom-In (Gantt week view)
+## Priority 3 — Term Zoom-In (Gantt week view) — DONE 12.08.26a
 
-### Why
-The 39-week grid shows enquiries at term level. Teachers want to see the within-term week-by-week picture.
+Built as a full-page overlay ("🗓 Term Planner" nav button) rather than an inline per-term panel:
+rows = every MASTER_ORDER subject across the whole year, columns = all 39 weeks (grouped under
+term bands), enquiry bars span weekStart–weekEnd and are colour-coded by State of Being, wider
+curriculum rows show one static block per term. Bars are draggable (move) and edge-resizable
+(extend/compress by a week). See `renderPlanner()` / `wireTermPlannerDrag()`.
 
-### What to build
-Click on a term header in the 39-week grid → expand an inline Gantt panel showing:
-- Rows: each enquiry active in that term
-- Columns: each week in the term (T1=8 cols, T2=7 cols, etc.)
-- Enquiry bars span weekStart–weekEnd
-- Subject/wider curriculum rows below the enquiry bars
-- Colour-coded by State of Being
+Possible follow-ups, not done:
+- Currently only sob-type and enquiry-mode-toggled subjects are draggable; wider term-buckets
+  (Mathematician, Oracy, Reader, etc.) are static since they have no week-level data.
+- No overlap/collision warning if a teacher deliberately drags two enquiries in the same subject
+  onto the same weeks (they just stack into separate lanes).
 
 ---
 
@@ -99,6 +103,8 @@ Reorder enquiries within a term, and move wider curriculum content between terms
 | 24.07.26a | 24.07.26 | Fixed week labels (T2·W1–2 local format); grid click-to-scroll; Y5 wider data in YEAR_DATA |
 | 24.07.26b | 24.07.26 | CLF wider curriculum data for Y1–Y4 and Y6 (all 11 subjects) |
 | 24.07.26c | 24.07.26 | Fixed JS syntax error (Y6 wider data displaced from YEAR_DATA); added Excel importer (3-step wizard) |
+| 24.07.26d | 24.07.26 | School logo in nav (jsDelivr CDN), SOB PNG icons in icons/ subfolder, TERM_NM changed to T1–T6 |
+| 12.08.26a | 12.08.26 | Enquiry view toggle for non-core subjects; Term Planner (Priority 3) with drag-to-move/resize; fixed term/week overlay edits not reflecting in the main view |
 
 ---
 
@@ -112,7 +118,9 @@ Reorder enquiries within a term, and move wider curriculum content between terms
 ## Key JS constants in index.html
 - `YEAR_DATA` — all enquiry + wider curriculum defaults per year group (Y6 wider now correctly embedded)
 - `WIDER_DEF` — 11 wider curriculum subjects with row labels, colours, icons
-- `TERM_WK = [8,7,6,6,5,7]` — weeks per term
-- `TERM_GS = [0,8,15,21,27,32]` — global week offsets (used internally, NOT for display)
+- `MASTER_ORDER` — canonical subject row order, shared by the main view, glance grid, and Term Planner
+- `TERM_WK = [7,7,6,5,7,7]` — weeks per term, 2026–27 (keep in date with `WEEK_DATES` each rollover)
+- `TERM_GS = [0,7,14,20,25,32]` — global week offsets (used internally, NOT for display)
+- `mergedEnqsFor(k, enqs, state)` — the merged (base + overlay), sorted list every view should render from; don't read raw `YEAR_DATA[k].enquiries` term/week fields directly
 - `IMP_FIELDS` — importable fields list (used by importer)
-- localStorage keys: `wfa_cp_Y1` … `wfa_cp_Y6`, `wfa_cp_import_mapping`
+- localStorage keys: `wfa_cp_Y1` … `wfa_cp_Y6`, `wfa_cp_import_mapping` — each year's blob now also carries `enquiryMode` (per-subject toggle) alongside `enquiries` (overlay) and `wider`

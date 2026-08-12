@@ -16,6 +16,8 @@
     --yr-dark: #0f6fa3;
     --yr-light: #e0f2fe;
     --yr-mid: #bae0f5;
+    --tp-label-w: 170px;
+    --tp-week-w: 64px;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: 'Nunito', sans-serif; font-size: 14px; color: var(--text); background: #f8fafc; line-height: 1.6; }
@@ -154,6 +156,13 @@
   }
   .subject-header h2 { font-size: 19px; font-weight: 900; }
   .subject-desc { font-size: 13px; color: var(--grey); margin-bottom: 18px; line-height: 1.6; }
+  .enquiry-toggle {
+    margin-left: auto; display: flex; align-items: center; gap: 5px;
+    font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .03em;
+    cursor: pointer; opacity: .8; white-space: nowrap;
+  }
+  .enquiry-toggle input { cursor: pointer; }
+  .enquiry-toggle:hover { opacity: 1; }
 
   /* ── Enquiry cards ── */
   .enquiry-card {
@@ -349,6 +358,67 @@
   .cross-cell .c-id { font-size: 11px; font-weight: 800; color: #94a3b8; }
   .cross-cell .c-q { font-size: 12px; font-weight: 600; color: #1e293b; line-height: 1.3; margin-top: 3px; }
   .cross-cell .c-text { font-size: 11px; color: #94a3b8; margin-top: 4px; }
+
+  /* ── Term Planner overlay ── */
+  #planner-overlay { display: none; position: fixed; inset: 0; z-index: 300; background: #fff; overflow-y: auto; }
+  #planner-overlay.open { display: block; }
+  .planner-top {
+    background: #fff; border-bottom: 2px solid var(--border);
+    padding: 14px 20px; display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap;
+    position: sticky; top: 0; z-index: 20;
+  }
+  .planner-back {
+    padding: 6px 14px; border-radius: 8px; font-size: 13px; font-weight: 800;
+    background: #f1f5f9; color: #475569; border: none; cursor: pointer;
+  }
+  .planner-back:hover { background: var(--border); }
+  .planner-title { font-size: 18px; font-weight: 900; color: var(--text); }
+  .planner-hint { font-size: 12px; color: #94a3b8; }
+  .tp-scroll { overflow-x: auto; padding: 20px; }
+  .tp-grid { display: inline-flex; flex-direction: column; min-width: 100%; }
+  .tp-row { display: flex; border-bottom: 1px solid var(--border); }
+  .tp-label-cell {
+    flex: 0 0 var(--tp-label-w); width: var(--tp-label-w); box-sizing: border-box;
+    padding: 8px 10px; font-size: 12px; font-weight: 800; color: #475569;
+    display: flex; align-items: center; gap: 6px;
+    position: sticky; left: 0; z-index: 5; background: #fff;
+    border-right: 2px solid var(--border);
+  }
+  .tp-sub-label { font-size: 11px; font-weight: 700; padding-left: 22px; }
+  .tp-term-head {
+    flex: 0 0 auto; box-sizing: border-box; padding: 8px 10px; font-size: 13px; font-weight: 900;
+    border-right: 1px solid #fff;
+  }
+  .tp-term-head .tp-term-dates { display: block; font-size: 10px; font-weight: 700; opacity: .75; margin-top: 1px; }
+  .tp-week-cell {
+    flex: 0 0 var(--tp-week-w); width: var(--tp-week-w); box-sizing: border-box;
+    text-align: center; font-size: 10px; font-weight: 700; color: #94a3b8; padding: 4px 0;
+    border-right: 1px solid #f1f5f9;
+  }
+  .tp-week-cell .tp-week-local { display: block; color: #cbd5e1; }
+  .tp-track { position: relative; flex: 1 1 auto; }
+  .tp-bar {
+    position: absolute; border-radius: 7px; padding: 5px 7px; color: #fff;
+    font-size: 11px; font-weight: 700; line-height: 1.25; cursor: grab; user-select: none;
+    box-shadow: 0 1px 2px rgba(0,0,0,.18); overflow: hidden;
+  }
+  .tp-bar:active { cursor: grabbing; }
+  .tp-bar.dragging { opacity: .85; box-shadow: 0 4px 10px rgba(0,0,0,.3); z-index: 15; }
+  .tp-bar-text {
+    display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+    pointer-events: none;
+  }
+  .tp-bar-handle { position: absolute; top: 0; bottom: 0; width: 9px; cursor: ew-resize; z-index: 2; }
+  .tp-bar-handle-l { left: 0; border-radius: 7px 0 0 7px; }
+  .tp-bar-handle-r { right: 0; border-radius: 0 7px 7px 0; }
+  .tp-bar-handle:hover { background: rgba(255,255,255,.35); }
+  .tp-bucket {
+    position: absolute; top: 6px; bottom: 6px; border-radius: 7px; padding: 6px 8px;
+    font-size: 11px; font-weight: 600; line-height: 1.3; color: #1e293b; cursor: pointer;
+    overflow: hidden; border: 1px solid rgba(0,0,0,.06);
+  }
+  .tp-bucket:hover { filter: brightness(0.97); }
+  .tp-bucket-empty { color: #cbd5e1; font-style: italic; font-weight: 500; }
 
   /* ── Footer ── */
   footer { padding: 14px 20px; border-top: 1px solid var(--border); margin-top: 20px; display: flex; align-items: center; justify-content: space-between; font-size: 12px; color: #94a3b8; }
@@ -547,8 +617,9 @@
   <button class="nav-export-btn" onclick="exportJSON()">Export JSON</button>
   <button class="nav-export-btn" onclick="openImporter()" style="background:#dcfce7;color:#166534;border-color:#bbf7d0">Import Excel</button>
   <button class="nav-export-btn" onclick="openRollover(curYear)" style="background:#fef2f2;color:#dc2626;border-color:#fecaca" title="Prepare this year group for a new school year">↺ Rollover</button>
+  <button class="nav-export-btn" onclick="openPlanner()" style="background:#eef2ff;color:#4338ca;border-color:#c7d2fe" title="Week-by-week view — drag to move or resize enquiries">🗓 Term Planner</button>
   <span id="sync-status" style="font-size:11px;font-weight:600;color:#94a3b8;white-space:nowrap"></span>
-  <span class="nav-version">26.07.26b</span>
+  <span class="nav-version">12.08.26a</span>
 </nav>
 
 <!-- ── Year chips (second row) ── -->
@@ -560,7 +631,7 @@
 
 <footer>
   <span>39 Week Plan &mdash; 2025&ndash;26 &mdash; Wallscourt Farm Academy</span>
-  <strong>25.07.26o</strong>
+  <strong>12.08.26a</strong>
 </footer>
 
 <!-- ── Edit modal ── -->
@@ -585,6 +656,18 @@
   </div>
   <div class="cross-body">
     <div class="cross-grid" id="cross-grid"></div>
+  </div>
+</div>
+
+<!-- ── Term Planner overlay ── -->
+<div id="planner-overlay">
+  <div class="planner-top">
+    <button class="planner-back" onclick="closePlanner()">&larr; Back</button>
+    <span class="planner-title" id="planner-title">Term Planner</span>
+    <span class="planner-hint">Click a bar to jump to that enquiry card &middot; drag to move &middot; drag an edge to extend or compress by a week</span>
+  </div>
+  <div class="tp-scroll">
+    <div class="tp-grid" id="planner-grid"></div>
   </div>
 </div>
 
@@ -1074,6 +1157,16 @@ function saveEnqField(k, id, fields) {
   d.enquiries[id] = {...(d.enquiries[id]||{}), ...fields};
   saveData(k, d);
 }
+// All enquiries for one state/subject, merged with any saved overlay (term/week moves,
+// content edits) and sorted into display order. Overlay-driven scheduling changes (e.g.
+// from duplicateEnq, the edit modal, or Term Planner drag/resize) are only reflected
+// correctly if every view reads term/weekStart/weekEnd from this merged result, not the
+// raw embedded defaults.
+function mergedEnqsFor(k, enqs, state) {
+  return enqs.filter(e => e.stateOfBeing === state)
+    .map(e => getEnq(k, e.id, e.stateOfBeing))
+    .sort((a,b)=>a.term-b.term||a.weekStart-b.weekStart||a.order-b.order);
+}
 function getWiderCell(k, wkey, rowLabel, termIdx) {
   const d = loadData(k);
   const saved = ((d.wider||{})[wkey]||{})[rowLabel]?.[termIdx];
@@ -1088,6 +1181,16 @@ function saveWiderCell(k, wkey, rowLabel, termIdx, value) {
   d.wider[wkey][rowLabel] = d.wider[wkey][rowLabel]||['','','','','',''];
   d.wider[wkey][rowLabel][termIdx] = value;
   saveData(k, d);
+}
+function getEnquiryMode(k, wkey) {
+  return !!(loadData(k).enquiryMode || {})[wkey];
+}
+function toggleEnquiryMode(k, wkey, val) {
+  const d = loadData(k);
+  d.enquiryMode = d.enquiryMode || {};
+  d.enquiryMode[wkey] = val;
+  saveData(k, d);
+  renderYear(k);
 }
 
 // ════════════════════════════════════════════════════════════
@@ -1188,111 +1291,137 @@ function renderYear(k) {
     if (item.type === 'sob') {
       const state = item.key;
       if (!activeStates.includes(state)) return;
-      const m = SOB_META[state];
       const bg = sobBg(state);
-      const sEnqs = enqs.filter(e => e.stateOfBeing === state).sort((a,b)=>a.term-b.term||a.order-b.order);
-
-    h += `<div id="s-${state.toLowerCase().replace(/ /g,'-')}" class="subject-header" style="border-color:${bg};color:${bg}">
-      ${sobImg(state, 28)}
-      <h2>${m.heading} — I am a ${m.state}</h2>
-    </div>`;
-
-    let lastTerm = null;
-    sEnqs.forEach((e, idx) => {
-      const enq = getEnq(k, e.id, e.stateOfBeing);
-      const wk = wkRange(e);
-      const statusCls = enq.planningStatus && enq.planningStatus !== 'unknown' ? `tag-status-${enq.planningStatus}` : '';
-      if (e.term !== lastTerm) {
-        lastTerm = e.term;
-        const dr = termDateRange(e.term);
-        const td = fmtTeachDays(TERM_TEACHING_DAYS[e.term - 1]);
-        h += `<div class="term-divider">
-          <span class="term-divider-label">Term ${e.term}</span>
-          ${dr ? `<span class="term-divider-dates">w/c ${dr}</span>` : ''}
-          <span class="term-divider-dates" style="color:#cbd5e1">${td}</span>
-          <span class="term-divider-line"></span>
-        </div>`;
-      }
-      const wkDate = weekDate(e.term, e.weekStart);
-      const termTag = `T${e.term} · W${e.weekStart}${e.weekStart!==e.weekEnd?'–'+e.weekEnd:''}${wkDate?' · w/c '+wkDate:''}`;
-      h += `<div class="enquiry-card" id="enq-${e.id}">
-        <div class="card-btns">
-          <button class="card-btn" title="Duplicate enquiry" onclick="duplicateEnq('${k}','${e.id}')">📋</button>
-          <button class="card-btn" title="Edit enquiry" onclick="openEnqEdit('${k}','${e.id}','${e.stateOfBeing}')">✏️</button>
-        </div>
-        <div class="enquiry-header">
-          <div class="enquiry-number" style="background:${bg}">${idx+1}</div>
-          <div class="enquiry-meta">
-            <h3>${esc(enq.keyQuestion)}</h3>
-            <div class="enquiry-tags">
-              <span class="tag tag-term">${termTag}</span>
-              ${enq.linkedText ? `<span class="tag tag-text">${esc(enq.linkedText)}</span>` : ''}
-              ${enq.genre ? `<span class="tag tag-genre">${esc(enq.genre)}</span>` : ''}
-              ${statusCls ? `<span class="tag ${statusCls}">${SPILL_TEXT[enq.planningStatus]||''}</span>` : ''}
-            </div>
-          </div>
-        </div>
-        <div class="enquiry-body">
-          ${(() => {
-            const scItems = (enq.successCriteria||'').split('\n').map(l=>l.trim()).filter(Boolean);
-            const scRow = `<div class="wf-row" style="align-items:flex-start">
-              <span class="wf-label">Success Criteria</span>
-              ${scItems.length
-                ? `<ul class="sc-list" style="margin:0;flex:1">${scItems.map(l=>`<li title="${esc(l)}">${esc(l)}</li>`).join('')}</ul>`
-                : `<span class="placeholder" style="font-size:12px">Click ✏️ to add…</span>`}
-            </div>`;
-            const writerFields = (hasWF) => hasWF
-              ? `<div class="writing-fields">
-                  ${enq.genre ? `<div class="wf-row"><span class="wf-label">Purpose</span><span class="wf-val">${esc(enq.genre)}</span></div>` : ''}
-                  ${enq.audience ? `<div class="wf-row"><span class="wf-label">Audience</span><span class="wf-val">${esc(enq.audience)}</span></div>` : ''}
-                  ${enq.writingOutcome ? `<div class="wf-row"><span class="wf-label">Outcome</span><span class="wf-val">${esc(enq.writingOutcome)}</span></div>` : ''}
-                  ${scRow}
-                </div>`
-              : `<p class="placeholder" style="font-size:12px">Click ✏️ to set purpose, audience and outcome…</p>`;
-            const hasWF = !!(enq.audience||enq.genre||enq.writingOutcome);
-            return state === 'Writer'
-              ? `<div class="enquiry-section">
-                  ${writerFields(hasWF)}
-                  ${enq.overview ? `<p class="content-lines" style="margin-top:8px;font-size:12px;color:#64748b">${esc(enq.overview)}</p>` : ''}
-                </div>`
-              : `<div class="enquiry-section is-split">
-                  <div class="enq-sub">
-                    <h4>${esc(state)} Outcome</h4>
-                    ${enq.subjectOutcome
-                      ? `<p class="content-lines" style="font-size:12px;color:#1e293b;margin:0">${esc(enq.subjectOutcome)}</p>`
-                      : `<p class="placeholder" style="font-size:12px">Click ✏️ to add ${esc(state.toLowerCase())} outcome…</p>`}
-                  </div>
-                  <div class="enq-sub">
-                    <h4>Writer Outcome</h4>
-                    ${writerFields(!!(enq.audience||enq.genre||enq.writingOutcome))}
-                  </div>
-                </div>`;
-          })()}
-          <div class="enquiry-section">
-            <h4>Writing Skills</h4>
-            ${(enq.writingSkills&&enq.writingSkills.length)
-              ? `<div class="skill-chips">${renderSkillChipsHTML(enq.writingSkills||[], k)}</div>`
-              : `<p class="placeholder">Click ✏️ to assign writing skills…</p>`}
-            ${enq.contentSkills ? `<div class="content-lines" style="margin-top:8px">${esc(enq.contentSkills).split('\n').map(l=>l.trim()).filter(Boolean).map(l=>`<div style="padding:2px 0;border-bottom:1px solid #f3f4f6;font-size:12px;color:#64748b">${l}</div>`).join('')}</div>` : ''}
-          </div>
-        </div>
-        <div class="links-row">
-          <strong>Cross-curricular links:</strong>
-          ${enq.crossCurricular ? esc(enq.crossCurricular) : '<em style="color:#cbd5e1">Click ✏️ to add cross-curricular links…</em>'}
-        </div>
-      </div>`;
-    });
+      const sEnqs = mergedEnqsFor(k, enqs, state);
+      h += renderEnquirySection(k, state, sEnqs, bg, null);
       // Wider sub-sections grouped under this SOB
       WIDER_DEF.filter(w => w.group === state).forEach(w => {
-        h += renderWiderSection(k, w, yc, yd);
+        h += renderWiderSection(k, w, yc, yd, false);
       });
     } else {
       const w = WIDER_DEF.find(x => x.key === item.key);
-      if (w) h += renderWiderSection(k, w, yc, yd);
+      if (!w) return;
+      const canEnquiry = !!SOB_META[w.name];
+      if (canEnquiry && getEnquiryMode(k, w.key)) {
+        const sEnqs = mergedEnqsFor(k, enqs, w.name);
+        h += renderEnquirySection(k, w.name, sEnqs, w.colour, w.key);
+      } else {
+        h += renderWiderSection(k, w, yc, yd, canEnquiry);
+      }
     }
   });
 
   document.getElementById('main').innerHTML = h;
+}
+
+// Header + list of enquiry cards for a subject, shared by true SOB subjects
+// (Writer/Geographer/Historian/Scientist) and other subjects switched into
+// "Enquiry view" via the toggle on their wider-curriculum section.
+// toggleKey: wider-curriculum key to show an on/off "Enquiry view" switch, or null for the core 4.
+function renderEnquirySection(k, state, sEnqs, bg, toggleKey) {
+  const m = SOB_META[state] || { heading: `${state} Enquiries`, state };
+
+  let h = `<div id="s-${state.toLowerCase().replace(/ /g,'-')}" class="subject-header" style="border-color:${bg};color:${bg}">
+    ${sobImg(state, 28)}
+    <h2>${m.heading} — I am a ${m.state}</h2>
+    ${toggleKey ? `<label class="enquiry-toggle" style="color:${bg}"><input type="checkbox" checked onchange="toggleEnquiryMode('${k}','${toggleKey}',this.checked)"> Enquiry view</label>` : ''}
+  </div>`;
+
+  h += renderEnquiryCards(k, state, sEnqs, bg);
+
+  if (toggleKey && !sEnqs.length) {
+    h += `<p class="placeholder" style="padding:4px 4px 16px">No ${esc(state)} enquiries recorded yet this year. Use 📋 on an existing card to duplicate one into this subject, then edit its details.</p>`;
+  }
+
+  return h;
+}
+
+function renderEnquiryCards(k, state, sEnqs, bg) {
+  let h = '';
+  let lastTerm = null;
+  sEnqs.forEach((enq, idx) => {
+    const statusCls = enq.planningStatus && enq.planningStatus !== 'unknown' ? `tag-status-${enq.planningStatus}` : '';
+    if (enq.term !== lastTerm) {
+      lastTerm = enq.term;
+      const dr = termDateRange(enq.term);
+      const td = fmtTeachDays(TERM_TEACHING_DAYS[enq.term - 1]);
+      h += `<div class="term-divider">
+        <span class="term-divider-label">Term ${enq.term}</span>
+        ${dr ? `<span class="term-divider-dates">w/c ${dr}</span>` : ''}
+        <span class="term-divider-dates" style="color:#cbd5e1">${td}</span>
+        <span class="term-divider-line"></span>
+      </div>`;
+    }
+    const wkDate = weekDate(enq.term, enq.weekStart);
+    const termTag = `T${enq.term} · W${enq.weekStart}${enq.weekStart!==enq.weekEnd?'–'+enq.weekEnd:''}${wkDate?' · w/c '+wkDate:''}`;
+    h += `<div class="enquiry-card" id="enq-${enq.id}">
+      <div class="card-btns">
+        <button class="card-btn" title="Duplicate enquiry" onclick="duplicateEnq('${k}','${enq.id}')">📋</button>
+        <button class="card-btn" title="Edit enquiry" onclick="openEnqEdit('${k}','${enq.id}','${enq.stateOfBeing}')">✏️</button>
+      </div>
+      <div class="enquiry-header">
+        <div class="enquiry-number" style="background:${bg}">${idx+1}</div>
+        <div class="enquiry-meta">
+          <h3>${esc(enq.keyQuestion)}</h3>
+          <div class="enquiry-tags">
+            <span class="tag tag-term">${termTag}</span>
+            ${enq.linkedText ? `<span class="tag tag-text">${esc(enq.linkedText)}</span>` : ''}
+            ${enq.genre ? `<span class="tag tag-genre">${esc(enq.genre)}</span>` : ''}
+            ${statusCls ? `<span class="tag ${statusCls}">${SPILL_TEXT[enq.planningStatus]||''}</span>` : ''}
+          </div>
+        </div>
+      </div>
+      <div class="enquiry-body">
+        ${(() => {
+          const scItems = (enq.successCriteria||'').split('\n').map(l=>l.trim()).filter(Boolean);
+          const scRow = `<div class="wf-row" style="align-items:flex-start">
+            <span class="wf-label">Success Criteria</span>
+            ${scItems.length
+              ? `<ul class="sc-list" style="margin:0;flex:1">${scItems.map(l=>`<li title="${esc(l)}">${esc(l)}</li>`).join('')}</ul>`
+              : `<span class="placeholder" style="font-size:12px">Click ✏️ to add…</span>`}
+          </div>`;
+          const writerFields = (hasWF) => hasWF
+            ? `<div class="writing-fields">
+                ${enq.genre ? `<div class="wf-row"><span class="wf-label">Purpose</span><span class="wf-val">${esc(enq.genre)}</span></div>` : ''}
+                ${enq.audience ? `<div class="wf-row"><span class="wf-label">Audience</span><span class="wf-val">${esc(enq.audience)}</span></div>` : ''}
+                ${enq.writingOutcome ? `<div class="wf-row"><span class="wf-label">Outcome</span><span class="wf-val">${esc(enq.writingOutcome)}</span></div>` : ''}
+                ${scRow}
+              </div>`
+            : `<p class="placeholder" style="font-size:12px">Click ✏️ to set purpose, audience and outcome…</p>`;
+          const hasWF = !!(enq.audience||enq.genre||enq.writingOutcome);
+          return state === 'Writer'
+            ? `<div class="enquiry-section">
+                ${writerFields(hasWF)}
+                ${enq.overview ? `<p class="content-lines" style="margin-top:8px;font-size:12px;color:#64748b">${esc(enq.overview)}</p>` : ''}
+              </div>`
+            : `<div class="enquiry-section is-split">
+                <div class="enq-sub">
+                  <h4>${esc(state)} Outcome</h4>
+                  ${enq.subjectOutcome
+                    ? `<p class="content-lines" style="font-size:12px;color:#1e293b;margin:0">${esc(enq.subjectOutcome)}</p>`
+                    : `<p class="placeholder" style="font-size:12px">Click ✏️ to add ${esc(state.toLowerCase())} outcome…</p>`}
+                </div>
+                <div class="enq-sub">
+                  <h4>Writer Outcome</h4>
+                  ${writerFields(!!(enq.audience||enq.genre||enq.writingOutcome))}
+                </div>
+              </div>`;
+        })()}
+        <div class="enquiry-section">
+          <h4>Writing Skills</h4>
+          ${(enq.writingSkills&&enq.writingSkills.length)
+            ? `<div class="skill-chips">${renderSkillChipsHTML(enq.writingSkills||[], k)}</div>`
+            : `<p class="placeholder">Click ✏️ to assign writing skills…</p>`}
+          ${enq.contentSkills ? `<div class="content-lines" style="margin-top:8px">${esc(enq.contentSkills).split('\n').map(l=>l.trim()).filter(Boolean).map(l=>`<div style="padding:2px 0;border-bottom:1px solid #f3f4f6;font-size:12px;color:#64748b">${l}</div>`).join('')}</div>` : ''}
+        </div>
+      </div>
+      <div class="links-row">
+        <strong>Cross-curricular links:</strong>
+        ${enq.crossCurricular ? esc(enq.crossCurricular) : '<em style="color:#cbd5e1">Click ✏️ to add cross-curricular links…</em>'}
+      </div>
+    </div>`;
+  });
+  return h;
 }
 
 function renderGlanceGrid(k, enqs, yc, yd, yl, activeStates) {
@@ -1308,6 +1437,31 @@ function renderGlanceGrid(k, enqs, yc, yd, yl, activeStates) {
     h += `<div class="grid-cell grid-header" style="background:${yl};color:${yd}${t===5?';border-right:none':''}">T${t+1}<div class="wks">${wkRanges[t]}</div><div class="wk-days">${fmtTeachDays(TERM_TEACHING_DAYS[t])}</div></div>`;
   }
 
+  // Renders one subject's row of term cells in the enquiry-card style (key question per term)
+  const glanceEnquiryRow = (state, bg) => {
+    const stateEnqs = mergedEnqsFor(k, enqs, state);
+    let hh = '';
+    for (let t = 0; t < 6; t++) {
+      const term = t + 1;
+      const termEnqs = stateEnqs.filter(enq => enq.term === term);
+      if (!termEnqs.length) {
+        hh += `<div class="grid-cell cell-empty${t===5?' no-right':''}"></div>`;
+      } else {
+        hh += `<div class="grid-cell${t===5?' no-right':''}" style="background:${bg}20">`;
+        termEnqs.forEach(enq => {
+          const localWk = enq.weekStart === enq.weekEnd ? `W${enq.weekStart}` : `W${enq.weekStart}–${enq.weekEnd}`;
+          hh += `<div class="cell-content" style="margin-bottom:4px;cursor:pointer" onclick="scrollToEnq('${enq.id}')">
+            <span class="cell-tag" style="background:${bg}">T${enq.term} · ${localWk}</span>
+            <div class="cell-q">${esc(enq.keyQuestion)}</div>
+            ${enq.linkedText ? `<div class="cell-book">${esc(enq.linkedText.split('·')[0].trim())}</div>` : ''}
+          </div>`;
+        });
+        hh += `</div>`;
+      }
+    }
+    return hh;
+  };
+
   // Unified subject rows in MASTER_ORDER
   MASTER_ORDER.forEach(item => {
     if (item.type === 'sob') {
@@ -1315,25 +1469,7 @@ function renderGlanceGrid(k, enqs, yc, yd, yl, activeStates) {
       if (!activeStates.includes(state)) return;
       const bg = sobBg(state);
       h += `<div class="grid-cell grid-subject">${sobImg(state,16)} ${state}</div>`;
-      for (let t = 0; t < 6; t++) {
-        const term = t + 1;
-        const termEnqs = enqs.filter(e => e.stateOfBeing === state && e.term === term);
-        if (!termEnqs.length) {
-          h += `<div class="grid-cell cell-empty${t===5?' no-right':''}"></div>`;
-        } else {
-          h += `<div class="grid-cell${t===5?' no-right':''}" style="background:${bg}20">`;
-          termEnqs.forEach(e => {
-            const enq = getEnq(k, e.id, e.stateOfBeing);
-            const localWk = e.weekStart === e.weekEnd ? `W${e.weekStart}` : `W${e.weekStart}–${e.weekEnd}`;
-            h += `<div class="cell-content" style="margin-bottom:4px;cursor:pointer" onclick="scrollToEnq('${e.id}')">
-              <span class="cell-tag" style="background:${bg}">T${e.term} · ${localWk}</span>
-              <div class="cell-q">${esc(enq.keyQuestion)}</div>
-              ${enq.linkedText ? `<div class="cell-book">${esc(enq.linkedText.split('·')[0].trim())}</div>` : ''}
-            </div>`;
-          });
-          h += `</div>`;
-        }
-      }
+      h += glanceEnquiryRow(state, bg);
       WIDER_DEF.filter(w => w.group === state).forEach(w => {
         const wi = SOB_ICON[w.name] ? sobImg(w.name, 14) : w.icon;
         h += `<div class="grid-cell grid-subject grid-sub-subject" style="color:${w.colour}">${wi} ${w.name}</div>`;
@@ -1352,6 +1488,10 @@ function renderGlanceGrid(k, enqs, yc, yd, yl, activeStates) {
       if (!w) return;
       const wi = SOB_ICON[w.name] ? sobImg(w.name, 14) : w.icon;
       h += `<div class="grid-cell grid-subject" style="color:${w.colour}">${wi} ${w.name}</div>`;
+      if (!!SOB_META[w.name] && getEnquiryMode(k, w.key)) {
+        h += glanceEnquiryRow(w.name, w.colour);
+        return;
+      }
     for (let t = 0; t < 6; t++) {
       const firstRow = w.rows[0];
       const last = t === 5 ? ' no-right' : '';
@@ -1379,11 +1519,12 @@ function renderGlanceGrid(k, enqs, yc, yd, yl, activeStates) {
   return h;
 }
 
-function renderWiderSection(k, w, yc, yd) {
+function renderWiderSection(k, w, yc, yd, canEnquiry) {
   let h = `<div class="wider-section" id="s-wider-${w.key}" style="border-left:3px solid ${w.colour}">
     <div class="wider-header" style="color:${w.colour}">
       <span class="wider-icon">${SOB_ICON[w.name] ? sobImg(w.name,20) : w.icon}</span>
       ${w.name}${w.state ? ` — ${w.state}` : ''}
+      ${canEnquiry ? `<label class="enquiry-toggle" style="color:${w.colour}"><input type="checkbox" onchange="toggleEnquiryMode('${k}','${w.key}',this.checked)"> Enquiry view</label>` : ''}
     </div>
     <div class="wider-table">
       <div class="wt-head">Focus</div>`;
@@ -1434,7 +1575,7 @@ function saveModal() {
   closeModal();
 }
 
-document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeModal(); closeCross(); } });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeModal(); closeCross(); closePlanner(); } });
 
 // ── Scheduling stepper helpers ──
 function _efi(id) { return document.getElementById(id); }
@@ -1692,7 +1833,11 @@ function setCrossTerm(t) {
 
 function renderCross() {
   const t = crossTerm;
-  const allE = YR_KEYS.flatMap(k => (YEAR_DATA[k]?.enquiries||[]).filter(e => e.term === t));
+  const mergedByYear = {};
+  YR_KEYS.forEach(k => {
+    mergedByYear[k] = (YEAR_DATA[k]?.enquiries||[]).map(e => getEnq(k, e.id, e.stateOfBeing));
+  });
+  const allE = YR_KEYS.flatMap(k => mergedByYear[k].filter(e => e.term === t));
   const states = SOB_ORDER.filter(s => allE.some(e => e.stateOfBeing === s));
   const grid = document.getElementById('cross-grid');
   if (!states.length) { grid.innerHTML = '<p style="color:#94a3b8;padding:20px">No enquiries for this term.</p>'; return; }
@@ -1714,13 +1859,12 @@ function renderCross() {
     h += `<div class="cross-row" style="display:grid;grid-template-columns:${cols};gap:8px;margin-bottom:10px">`;
     h += `<div class="cross-sob-label"><span class="cross-sob-pill" style="background:${bg}">${state}</span></div>`;
     YR_KEYS.forEach(k => {
-      const enqs = (YEAR_DATA[k]?.enquiries||[]).filter(e => e.term === t && e.stateOfBeing === state);
+      const enqs = mergedByYear[k].filter(e => e.term === t && e.stateOfBeing === state);
       if (!enqs.length) { h += '<div class="cross-cell-empty"></div>'; return; }
       h += '<div style="display:flex;flex-direction:column;gap:6px">';
-      enqs.forEach(e => {
-        const enq = getEnq(k, e.id, e.stateOfBeing);
-        h += `<div class="cross-cell" onclick="crossNav('${k}','${e.id}')">
-          <div class="c-id">${e.id}</div>
+      enqs.forEach(enq => {
+        h += `<div class="cross-cell" onclick="crossNav('${k}','${enq.id}')">
+          <div class="c-id">${enq.id}</div>
           <div class="c-q">${esc(enq.keyQuestion)}</div>
           ${enq.linkedText ? `<div class="c-text">${esc(enq.linkedText.split('·')[0].trim())}</div>` : ''}
         </div>`;
@@ -1744,6 +1888,226 @@ function crossNav(k, id) {
     if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }, 100);
 }
+
+// ════════════════════════════════════════════════════════════
+// TERM PLANNER — week-by-week Gantt view, drag to move/resize
+// ════════════════════════════════════════════════════════════
+const TP_WEEK_W = 64;     // px per week column — must match --tp-week-w
+const TP_LANE_H = 58;     // px per stacked-bar lane
+const TP_LANE_GAP = 6;
+const TP_ROW_PAD = 8;
+const TOTAL_WEEKS = TERM_WK.reduce((a,b)=>a+b, 0);
+const TP_TERM_TINT = ['#eff6ff','#ecfdf5','#fff7ed','#fdf2f8','#f5f3ff','#f0fdfa'];
+const TP_TERM_TEXT = ['#1d4ed8','#047857','#c2410c','#be185d','#6d28d9','#0f766e'];
+
+function globalToLocal(gw) {
+  for (let t = 0; t < TERM_WK.length; t++) {
+    if (gw <= TERM_GS[t] + TERM_WK[t]) return { term: t+1, week: gw - TERM_GS[t] };
+  }
+  const lastT = TERM_WK.length;
+  return { term: lastT, week: TERM_WK[lastT-1] };
+}
+const localToGlobal = (term, week) => TERM_GS[term-1] + week;
+
+// Greedy interval-graph lane assignment so overlapping bars stack instead of collide.
+function tpAssignLanes(items) {
+  const laneEnd = [];
+  return items.map(it => {
+    let lane = laneEnd.findIndex(end => end < it.gStart);
+    if (lane === -1) { lane = laneEnd.length; laneEnd.push(it.gEnd); }
+    else laneEnd[lane] = it.gEnd;
+    return { ...it, lane };
+  });
+}
+
+function openPlanner() {
+  renderPlanner(curYear);
+  document.getElementById('planner-overlay').classList.add('open');
+}
+function closePlanner() {
+  document.getElementById('planner-overlay').classList.remove('open');
+}
+
+function renderPlanner(k) {
+  const d = YEAR_DATA[k];
+  const enqs = d.enquiries;
+  document.getElementById('planner-title').textContent = `Term Planner — ${k} · ${d.learningZone.replace(' Learning Zone','')}`;
+
+  const activeStates = MASTER_ORDER.filter(i => i.type==='sob' && enqs.some(e => e.stateOfBeing === i.key)).map(i => i.key);
+  const gridWidth = TOTAL_WEEKS * TP_WEEK_W;
+
+  let h = '';
+
+  // ── Term band header ──
+  h += `<div class="tp-row" style="border-bottom:none">
+    <div class="tp-label-cell" style="border-right:2px solid var(--border)"></div>`;
+  TERM_WK.forEach((wks, t) => {
+    h += `<div class="tp-term-head" style="width:${wks*TP_WEEK_W}px;background:${TP_TERM_TINT[t]};color:${TP_TERM_TEXT[t]}">
+      T${t+1}<span class="tp-term-dates">${termDateRange(t+1)}</span>
+    </div>`;
+  });
+  h += `</div>`;
+
+  // ── Week number header ──
+  h += `<div class="tp-row">
+    <div class="tp-label-cell">SUBJECT</div>`;
+  for (let gw = 1; gw <= TOTAL_WEEKS; gw++) {
+    const { week } = globalToLocal(gw);
+    h += `<div class="tp-week-cell">${gw}<span class="tp-week-local">W${week}</span></div>`;
+  }
+  h += `</div>`;
+
+  // Renders one subject's row: draggable/resizable bars per enquiry, stacked into lanes.
+  const enquiryTrackRow = (state, bg, sub) => {
+    const items = mergedEnqsFor(k, enqs, state).map(enq => ({
+      id: enq.id, keyQuestion: enq.keyQuestion, term: enq.term,
+      gStart: localToGlobal(enq.term, enq.weekStart),
+      gEnd: localToGlobal(enq.term, enq.weekEnd),
+    }));
+    const laned = tpAssignLanes(items);
+    const lanes = Math.max(1, ...laned.map(it => it.lane+1));
+    const trackH = lanes*TP_LANE_H + (lanes-1)*TP_LANE_GAP + TP_ROW_PAD*2;
+
+    let hh = `<div class="tp-row">
+      <div class="tp-label-cell${sub?' tp-sub-label':''}">${sobImg(state,sub?12:16)} ${state}</div>
+      <div class="tp-track" style="width:${gridWidth}px;height:${trackH}px">`;
+    laned.forEach(it => {
+      const left = (it.gStart-1)*TP_WEEK_W + 2;
+      const width = (it.gEnd-it.gStart+1)*TP_WEEK_W - 4;
+      const top = TP_ROW_PAD + it.lane*(TP_LANE_H+TP_LANE_GAP);
+      hh += `<div class="tp-bar" data-enq-id="${it.id}" data-state="${esc(state)}"
+        style="left:${left}px;width:${width}px;top:${top}px;height:${TP_LANE_H}px;background:${bg}">
+        <div class="tp-bar-handle tp-bar-handle-l" data-edge="l"></div>
+        <div class="tp-bar-text">${esc(it.keyQuestion)}</div>
+        <div class="tp-bar-handle tp-bar-handle-r" data-edge="r"></div>
+      </div>`;
+    });
+    hh += `</div></div>`;
+    return hh;
+  };
+
+  // Renders a non-draggable wider-curriculum row: one static block per term.
+  const bucketRow = (w, sub) => {
+    let hh = `<div class="tp-row">
+      <div class="tp-label-cell${sub?' tp-sub-label':''}" style="color:${w.colour}">${SOB_ICON[w.name] ? sobImg(w.name, sub?12:16) : w.icon} ${w.name}</div>
+      <div class="tp-track" style="width:${gridWidth}px;height:${TP_LANE_H+TP_ROW_PAD*2}px">`;
+    for (let t = 0; t < 6; t++) {
+      const left = TERM_GS[t]*TP_WEEK_W + 3;
+      const width = TERM_WK[t]*TP_WEEK_W - 6;
+      const val = getWiderCell(k, w.key, w.rows[0].label, t);
+      hh += `<div class="tp-bucket${val?'':' tp-bucket-empty'}" style="left:${left}px;width:${width}px;background:${w.colour}18"
+        onclick="openWiderEdit('${k}','${w.key}','${esc(w.rows[0].label)}',${t})">${val ? esc(val) : 'Click to add…'}</div>`;
+    }
+    hh += `</div></div>`;
+    return hh;
+  };
+
+  MASTER_ORDER.forEach(item => {
+    if (item.type === 'sob') {
+      const state = item.key;
+      if (!activeStates.includes(state)) return;
+      h += enquiryTrackRow(state, sobBg(state), false);
+      WIDER_DEF.filter(w => w.group === state).forEach(w => { h += bucketRow(w, true); });
+    } else {
+      const w = WIDER_DEF.find(x => x.key === item.key);
+      if (!w) return;
+      const canEnquiry = !!SOB_META[w.name];
+      if (canEnquiry && getEnquiryMode(k, w.key)) h += enquiryTrackRow(w.name, w.colour, false);
+      else h += bucketRow(w, false);
+    }
+  });
+
+  const grid = document.getElementById('planner-grid');
+  grid.innerHTML = h;
+  wireTermPlannerDrag(k, grid);
+}
+
+// ── Drag to move (whole bar) and drag edges to resize (extend/compress by whole weeks) ──
+// The move/up listeners are attached once at load; wireTermPlannerDrag() only needs to
+// (re)assign grid.onmousedown on each render, which replaces rather than stacks handlers.
+let tpDrag = null; // { k, id, state, mode:'move'|'resize-l'|'resize-r', bar, startX, gStart, gEnd, duration, moved }
+
+function wireTermPlannerDrag(k, grid) {
+  grid.onmousedown = e => {
+    const bar = e.target.closest('.tp-bar');
+    if (!bar) return;
+    const id = bar.dataset.enqId;
+    const state = bar.dataset.state;
+    const enq = getEnq(k, id, state);
+    const gStart = localToGlobal(enq.term, enq.weekStart);
+    const gEnd = localToGlobal(enq.term, enq.weekEnd);
+    const edge = e.target.dataset.edge;
+    tpDrag = {
+      k, id, state, bar,
+      mode: edge === 'l' ? 'resize-l' : edge === 'r' ? 'resize-r' : 'move',
+      startX: e.clientX, gStart, gEnd, duration: gEnd - gStart, moved: false,
+    };
+    bar.classList.add('dragging');
+    e.preventDefault();
+  };
+}
+
+document.addEventListener('mousemove', e => {
+  const drag = tpDrag;
+  if (!drag) return;
+  const deltaPx = e.clientX - drag.startX;
+  const deltaWeeks = Math.round(deltaPx / TP_WEEK_W);
+  if (deltaWeeks !== 0) drag.moved = true;
+  if (!drag.moved) return;
+
+  if (drag.mode === 'move') {
+    const maxStart = TOTAL_WEEKS - drag.duration + 1;
+    let newStart = Math.min(Math.max(1, drag.gStart + deltaWeeks), maxStart);
+    // Keep the whole bar inside a single term — clamp so it can't straddle a term boundary.
+    const startTerm = globalToLocal(newStart).term;
+    const termMaxStart = TERM_GS[startTerm-1] + TERM_WK[startTerm-1] - drag.duration;
+    newStart = Math.min(newStart, Math.max(TERM_GS[startTerm-1]+1, termMaxStart));
+    drag._newStart = newStart;
+    drag.bar.style.left = ((newStart-1)*TP_WEEK_W + 2) + 'px';
+  } else if (drag.mode === 'resize-l') {
+    const termOfEnd = globalToLocal(drag.gEnd).term;
+    const minStart = TERM_GS[termOfEnd-1] + 1;
+    let newStart = Math.min(Math.max(minStart, drag.gStart + deltaWeeks), drag.gEnd);
+    drag._newStart = newStart;
+    drag.bar.style.left = ((newStart-1)*TP_WEEK_W + 2) + 'px';
+    drag.bar.style.width = ((drag.gEnd-newStart+1)*TP_WEEK_W - 4) + 'px';
+  } else if (drag.mode === 'resize-r') {
+    const termOfStart = globalToLocal(drag.gStart).term;
+    const maxEnd = TERM_GS[termOfStart-1] + TERM_WK[termOfStart-1];
+    let newEnd = Math.max(Math.min(maxEnd, drag.gEnd + deltaWeeks), drag.gStart);
+    drag._newEnd = newEnd;
+    drag.bar.style.width = ((newEnd-drag.gStart+1)*TP_WEEK_W - 4) + 'px';
+  }
+});
+
+document.addEventListener('mouseup', () => {
+  const drag = tpDrag;
+  if (!drag) return;
+  tpDrag = null;
+  const { k, id, mode, moved, bar } = drag;
+  bar.classList.remove('dragging');
+
+  if (!moved) {
+    // A plain click (no drag) — jump to the enquiry card in the main view.
+    closePlanner();
+    scrollToEnq(id);
+    return;
+  }
+
+  if (mode === 'move' && drag._newStart != null && drag._newStart !== drag.gStart) {
+    const { term, week } = globalToLocal(drag._newStart);
+    saveEnqField(k, id, { term, weekStart: week, weekEnd: week + drag.duration });
+  } else if (mode === 'resize-l' && drag._newStart != null && drag._newStart !== drag.gStart) {
+    const { term, week } = globalToLocal(drag._newStart);
+    saveEnqField(k, id, { term, weekStart: week });
+  } else if (mode === 'resize-r' && drag._newEnd != null && drag._newEnd !== drag.gEnd) {
+    const { term, week } = globalToLocal(drag._newEnd);
+    saveEnqField(k, id, { weekEnd: week });
+  }
+
+  renderPlanner(k);
+  if (k === curYear) renderYear(k);
+});
 
 // ════════════════════════════════════════════════════════════
 // EXPORT JSON
